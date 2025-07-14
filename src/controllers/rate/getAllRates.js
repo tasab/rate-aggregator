@@ -1,0 +1,44 @@
+import db from '../../models/index.js';
+
+export const getAllRates = async (req, res) => {
+  try {
+    const userId = req.user?.id || req.params.userId; // підтримка токена або query
+
+    if (!userId) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    const rates = await db.Rate.findAll({
+      where: { userId },
+      include: [
+        {
+          model: db.Currency,
+          through: { attributes: [] }, // виключити join-таблицю
+          attributes: ['id', 'code', 'fullName'],
+          as: 'currencies',
+        },
+        {
+          model: db.CurrencyRateConfig,
+          as: 'currencyConfigs',
+          include: [
+            {
+              model: db.Currency,
+              attributes: ['id', 'code'],
+              as: 'currency',
+            },
+          ],
+        },
+        {
+          model: db.RateSource,
+          attributes: ['id', 'name', 'type', 'location', 'link'],
+          as: 'rateSource',
+        },
+      ],
+    });
+
+    res.status(200).json(rates);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
