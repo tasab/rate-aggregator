@@ -23,6 +23,7 @@ export const addCurrencyToRate = async (req, res) => {
     const addedCurrencies = await rate.addCurrencies(currencyIds);
     res.status(201).json(addedCurrencies);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };

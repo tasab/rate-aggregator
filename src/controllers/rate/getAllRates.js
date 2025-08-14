@@ -34,11 +34,12 @@ export const getAllRates = async (req, res) => {
           as: 'rateSource',
         },
       ],
+      order: [['updatedAt', 'DESC']],
     });
 
     res.status(200).json(rates);
-  } catch (err) {
-    console.error(err);
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };

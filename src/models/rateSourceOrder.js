@@ -29,9 +29,6 @@ export default (sequelize, DataTypes) => {
       link: {
         type: DataTypes.STRING,
         allowNull: true,
-        validate: {
-          isUrl: true,
-        },
       },
       phoneNumber: {
         type: DataTypes.STRING,

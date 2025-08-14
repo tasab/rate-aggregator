@@ -1,21 +1,20 @@
 import db from '../../models/index.js';
-import { getRateSourceController } from '../../utils/getRateSourceController.js';
+import { getLatestSourceData } from '../../helpers/getLatestSourceData.js';
 
 export const getRateSourceById = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(id, 'id1');
+
     const { includeRate } = req.query;
     let filteredRate = null;
-    console.log(includeRate, 'includeRate1');
-    // Fetch current source with associated currencies
+
     const currentSource = await db.RateSource.findByPk(id, {
       include: [
         {
           model: db.Currency,
-          through: { attributes: [] }, // Exclude join table attributes
+          through: { attributes: [] },
           attributes: ['id', 'code', 'fullName'],
-          as: 'currencies', // Alias for related currencies
+          as: 'currencies',
         },
       ],
     });
@@ -25,30 +24,25 @@ export const getRateSourceById = async (req, res) => {
     }
 
     if (includeRate) {
-      // Get the source controller
-      const sourceController = getRateSourceController(
-        currentSource.controllerType
-      );
+      const latestRateSourceData = await getLatestSourceData(id);
 
-      // Call the controller to get rates
-      const rate = await sourceController(currentSource);
-
-      // Extract currency codes from currentSource.currencies
-      console.log(currentSource.currencies, 'currentSource.currencies1');
       const availableCurrencyCodes = currentSource.currencies.map(
         (currency) => currency.code
       );
-      console.log(availableCurrencyCodes, 'availableCurrencyCodes');
-      console.log(rate, 'rate1');
-
-      // Filter rate objects based on available currencies
-      filteredRate = rate.filter((item) =>
-        availableCurrencyCodes.includes(item.code)
+      filteredRate = latestRateSourceData.filter((item) =>
+        availableCurrencyCodes.includes(item.currency_code)
       );
     }
 
+    const parsedRate = filteredRate.map((item) => ({
+      code: item.currency_code,
+      bid: parseFloat(item?.bid_rate),
+      sell: parseFloat(item.sell_rate),
+      updated: item.fetched_at,
+    }));
+
     return res.status(200).send({
-      rate: filteredRate, // Filtered rates
+      rate: parsedRate,
       currentSource,
     });
   } catch (error) {
