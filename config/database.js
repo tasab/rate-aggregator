@@ -10,22 +10,21 @@ export default {
     dialect: 'postgres',
     logging: console.log,
   },
-  test: {
-    username: config.get('database.username'),
-    password: config.get('database.password'),
-    database: config.get('database.database') + '_test',
-    host: config.get('database.host'),
-    port: config.get('database.port'),
-    dialect: 'postgres',
-    logging: false,
-  },
   production: {
-    username: config.get('database.username'),
-    password: config.get('database.password'),
-    database: config.get('database.database'),
-    host: config.get('database.host'),
-    port: config.get('database.port'),
+    use_env_variable: 'DATABASE_URL',
     dialect: 'postgres',
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
     logging: false,
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000,
+    },
   },
 };
