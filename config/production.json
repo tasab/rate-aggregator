@@ -3,7 +3,7 @@
     "username": "postgres",
     "password": "MXZaBIJvmqChzEkOYsHMIJxtOnSUbbBk",
     "database": "railway",
-    "host": "postgres.railway.internal",
+    "host": "postgresql://postgres:MXZaBIJvmqChzEkOYsHMIJxtOnSUbbBk@interchange.proxy.rlwy.net:53874/railway",
     "port": 5432,
     "dialect": "postgres",
     "dialectOptions": {
