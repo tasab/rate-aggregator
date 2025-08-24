@@ -1,5 +1,5 @@
 import Sequelize, { DataTypes } from 'sequelize';
-import config from 'config';
+import configFile from '../../config/database.js';
 
 import UserModel from './user.js';
 import RateModel from './rate.js';
@@ -11,12 +11,26 @@ import RateSourceDataModel from './rateSourceData.js';
 
 const db = {};
 
-const sequelize = new Sequelize(
-  config.database.database,
-  config.database.username,
-  config.database.password,
-  config.database
-);
+const env = process.env.RAILWAY_ENVIRONMENT
+  ? 'production'
+  : process.env.NODE_ENV || 'development';
+const config = configFile[env];
+
+let sequelize;
+
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env[config.use_env_variable], {
+    ...config,
+    use_env_variable: undefined, // видаляємо цей ключ з опцій
+  });
+} else {
+  sequelize = new Sequelize(
+    config.database,
+    config.username,
+    config.password,
+    config
+  );
+}
 
 db.User = UserModel(sequelize, DataTypes);
 db.Currency = CurrencyModel(sequelize, DataTypes);
