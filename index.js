@@ -2,13 +2,14 @@ import express from 'express';
 import cors from 'cors';
 import mainRouter from './src/routes/index.js';
 import DBHealthRouter from './src/routes/DBHealth.js';
+import { startScheduler } from './src/cron/scheduler.js';
 
 const app = express();
 const port = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
-
+startScheduler();
 mainRouter.use('/db', DBHealthRouter);
 app.get('/health', (req, res) => {
   res.status(200).json({

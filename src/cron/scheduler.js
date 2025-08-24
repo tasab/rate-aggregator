@@ -3,7 +3,7 @@ import { fetchRawRatesFromSources } from './fetchRates.js';
 
 export function startScheduler() {
   // Запускаємо кожні 30 хвилин
-  cron.schedule('*/30 * * * *', async () => {
+  cron.schedule('30 */2 * * *', async () => {
     console.log('⏰ Rate fetching cron job triggered');
     await fetchRawRatesFromSources();
   });
