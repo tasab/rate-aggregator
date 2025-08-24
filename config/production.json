@@ -4,7 +4,7 @@
     "password": "MXZaBIJvmqChzEkOYsHMIJxtOnSUbbBk",
     "database": "railway",
     "host": "interchange.proxy.rlwy.net",
-    "port": 5432,
+    "port": 53874,
     "dialect": "postgres",
     "dialectOptions": {
       "ssl": {
