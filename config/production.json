@@ -1,6 +1,10 @@
 {
   "database": {
-    "use_env_variable": "DATABASE_URL",
+    "username": "postgres",
+    "password": "MXZaBIJvmqChzEkOYsHMIJxtOnSUbbBk",
+    "database": "railway",
+    "host": "postgres.railway.internal",
+    "port": 5432,
     "dialect": "postgres",
     "dialectOptions": {
       "ssl": {
