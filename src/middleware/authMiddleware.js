@@ -1,7 +1,5 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = '8Zz5tw0Ionm3XPZZfN0NOml3z9FMfmasdjann823n4nu889fn24f92894';
-
 const authMiddleware = (req, res, next) => {
   const header = req.headers.authorization;
 
@@ -10,13 +8,12 @@ const authMiddleware = (req, res, next) => {
   }
 
   const token = header.split(' ')[1];
-  console.log('here1');
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
     next();
   } catch (error) {
-    console.log(error, 'Failed - authMiddleware');
+    console.log('Failed - authMiddleware', error);
     return res.status(401).json({ message: 'Invalid token' });
   }
 };

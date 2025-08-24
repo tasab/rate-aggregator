@@ -12,10 +12,10 @@ import RateSourceDataModel from './rateSourceData.js';
 const db = {};
 
 const sequelize = new Sequelize(
-  config.database,
-  config.username,
-  config.password,
-  config
+  config.database.database,
+  config.database.username,
+  config.database.password,
+  config.database
 );
 
 db.User = UserModel(sequelize, DataTypes);

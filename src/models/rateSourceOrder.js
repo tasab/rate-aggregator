@@ -45,7 +45,6 @@ export default (sequelize, DataTypes) => {
           model: 'users',
           key: 'id',
         },
-        onDelete: 'CASCADE',
       },
     },
     {
@@ -59,10 +58,12 @@ export default (sequelize, DataTypes) => {
     RateSourceOrder.belongsTo(models.User, {
       foreignKey: 'userId',
       as: 'user',
+      onDelete: 'CASCADE',
     });
-    RateSourceOrder.hasOne(models.RateSourceOrder, {
-      foreignKey: 'rateSourceId',
+    RateSourceOrder.hasOne(models.RateSource, {
+      foreignKey: 'rateSourceOrderId',
       as: 'rateSource',
+      onDelete: 'SET NULL',
     });
   };
 

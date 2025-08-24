@@ -14,7 +14,7 @@ export const getAllRateSources = async (req, res) => {
     });
     return res.status(200).send(rateSources);
   } catch (error) {
-    console.log(error);
+    console.log('Failed - getAllRateSources', error);
     return res.status(500).send({ error: 'Internal server error' });
   }
 };

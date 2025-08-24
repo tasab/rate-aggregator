@@ -1,0 +1,17 @@
+{
+  "port": 3001,
+  "database": {
+    "username": "prod_user",
+    "password": "prod_password",
+    "database": "currency_rates_prod",
+    "host": "prod-db.example.com",
+    "port": 5432,
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false
+      }
+    }
+  }
+}

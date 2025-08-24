@@ -1,0 +1,94 @@
+'use strict';
+
+/** @type {import('sequelize-cli').Migration} */
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable('currency_rate_configs', {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
+      },
+      effective_from: {
+        type: Sequelize.DATE,
+        allowNull: false,
+      },
+      effective_to: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      rate_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'rates',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
+      currency_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'currencies',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
+      bid_margin: {
+        type: Sequelize.DECIMAL(10, 4),
+        allowNull: false,
+        defaultValue: -0.1,
+      },
+      bid_should_round: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      bid_rounding_depth: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
+      },
+      bid_rounding_type: {
+        type: Sequelize.ENUM('ROUND_UP', 'ROUND_DOWN', 'ROUND_DEFAULT'),
+        allowNull: false,
+        defaultValue: 'ROUND_DEFAULT',
+      },
+      sell_margin: {
+        type: Sequelize.DECIMAL(10, 4),
+        allowNull: false,
+        defaultValue: 0.1,
+      },
+      sell_should_round: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
+      sell_rounding_depth: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
+      },
+      sell_rounding_type: {
+        type: Sequelize.ENUM('ROUND_UP', 'ROUND_DOWN', 'ROUND_DEFAULT'),
+        allowNull: false,
+        defaultValue: 'ROUND_DEFAULT',
+      },
+      created_at: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      updated_at: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+    });
+  },
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable('currency_rate_configs');
+  },
+};

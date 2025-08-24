@@ -1,7 +1,6 @@
 import db from '../../models/index.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { JWT_EXPIRES_IN, JWT_SECRET } from './login.js';
 
 export const register = async (req, res) => {
   try {
@@ -22,9 +21,9 @@ export const register = async (req, res) => {
         id: user.id,
         email: user.email,
       },
-      JWT_SECRET, // Make sure to set this in your environment variables
+      process.env.JWT_SECRET,
       {
-        expiresIn: JWT_EXPIRES_IN,
+        expiresIn: process.env.JWT_EXPIRES_IN,
       }
     );
 
@@ -34,6 +33,7 @@ export const register = async (req, res) => {
       token,
     });
   } catch (error) {
+    console.log('Failed - register', error);
     return res.status(500).json({ message: error?.message });
   }
 };

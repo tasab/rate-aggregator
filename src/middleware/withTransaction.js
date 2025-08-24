@@ -10,7 +10,7 @@ export const withTransaction = (handler) => {
       await transaction.commit();
     } catch (error) {
       await transaction.rollback();
-      console.log(error, 'failed on withTransaction');
+      console.log('Failed - withTransaction', error);
       return res.status(500).json({ message: 'Internal server error' });
     }
   };
