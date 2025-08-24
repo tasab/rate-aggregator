@@ -1,0 +1,58 @@
+'use strict';
+
+/** @type {import('sequelize-cli').Migration} */
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable('rate_sources', {
+      id: {
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
+      },
+      name: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      type: {
+        type: Sequelize.ENUM('PRIVATE', 'BANK', 'CANTOR'),
+        allowNull: false,
+        defaultValue: 'CANTOR',
+      },
+      controller_type: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      location: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      link: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      rate_source_order_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        unique: true,
+        references: {
+          model: 'rate_source_orders',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
+      },
+      created_at: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      updated_at: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+    });
+  },
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable('rate_sources');
+  },
+};

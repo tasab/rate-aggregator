@@ -29,7 +29,7 @@ export default (sequelize, DataTypes) => {
       },
       rawData: {
         type: DataTypes.TEXT,
-        allowNull: true, // для збереження повної відповіді API
+        allowNull: true,
       },
     },
     {

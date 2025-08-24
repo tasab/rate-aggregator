@@ -33,6 +33,7 @@ export default (sequelize, DataTypes) => {
     User.hasMany(models.RateSourceOrder, {
       foreignKey: 'userId',
       as: 'rateSourceOrders',
+      onDelete: 'CASCADE',
     });
   };
 

@@ -30,7 +30,7 @@ export default (sequelize, DataTypes) => {
       },
       rateSourceOrderId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         unique: true,
       },
     },
@@ -46,12 +46,13 @@ export default (sequelize, DataTypes) => {
     RateSource.belongsTo(models.RateSourceOrder, {
       foreignKey: 'rateSourceOrderId',
       as: 'rateSourceOrder',
+      onDelete: 'SET NULL',
     });
     RateSource.belongsToMany(models.Currency, {
-      through: 'rate_source_currency', // Name of the join table
-      foreignKey: 'rateSourceId', // Foreign key for RateSource in the join table
-      otherKey: 'currencyId', // Foreign key for Currency in the join table
-      as: 'currencies', // Alias for the association
+      through: 'rate_source_currency',
+      foreignKey: 'rateSourceId',
+      otherKey: 'currencyId',
+      as: 'currencies',
     });
     RateSource.hasMany(models.RateSourceData, {
       foreignKey: 'rateSourceId',
