@@ -7,7 +7,13 @@ import DBHealthRouter from './src/routes/DBHealth.js';
 const app = express();
 const port = process.env.PORT || 3001;
 
-app.use(cors());
+const corsOptions = {
+  origin: 'https://bejewelled-palmier-ddd880.netlify.app',
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 mainRouter.use('/db', DBHealthRouter);
