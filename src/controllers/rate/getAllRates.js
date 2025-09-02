@@ -1,8 +1,9 @@
 import db from '../../models/index.js';
+import { LOG_ERROR, logger } from '../../utils/logger.js';
 
 export const getAllRates = async (req, res) => {
   try {
-    const userId = req.user?.id || req.params.userId; // підтримка токена або query
+    const userId = req.user?.id || req.params.userId;
 
     if (!userId) {
       return res.status(400).json({ message: 'User ID is required' });
@@ -13,7 +14,7 @@ export const getAllRates = async (req, res) => {
       include: [
         {
           model: db.Currency,
-          through: { attributes: [] }, // виключити join-таблицю
+          through: { attributes: [] },
           attributes: ['id', 'code', 'fullName'],
           as: 'currencies',
         },
@@ -39,7 +40,7 @@ export const getAllRates = async (req, res) => {
 
     res.status(200).json(rates);
   } catch (error) {
-    console.error(error);
+    logger(error, 'Failed to load: getAllRates', LOG_ERROR);
     res.status(500).json({ message: 'Internal server error' });
   }
 };

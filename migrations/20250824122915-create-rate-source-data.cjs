@@ -1,6 +1,5 @@
 'use strict';
 
-/** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('rate_source_data', {
@@ -26,31 +25,31 @@ module.exports = {
       },
       bid_rate: {
         type: Sequelize.DECIMAL(15, 6),
-        allowNull: false,
+        allowNull: true,
       },
       sell_rate: {
         type: Sequelize.DECIMAL(15, 6),
-        allowNull: false,
+        allowNull: true,
       },
       fetched_at: {
         type: Sequelize.DATE,
-        allowNull: false,
+        allowNull: true,
       },
       raw_data: {
         type: Sequelize.TEXT,
         allowNull: true,
       },
       created_at: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.DATE,
       },
       updated_at: {
-        allowNull: false,
+        allowNull: true,
         type: Sequelize.DATE,
       },
     });
   },
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.dropTable('rate_source_data');
   },
 };

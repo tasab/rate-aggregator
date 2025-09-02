@@ -1,6 +1,7 @@
 import db from '../../models/index.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { LOG_ERROR, logger } from '../../utils/logger.js';
 
 export const register = async (req, res) => {
   try {
@@ -33,7 +34,7 @@ export const register = async (req, res) => {
       token,
     });
   } catch (error) {
-    console.log('Failed - register', error);
+    logger(error, 'Failed to load: register', LOG_ERROR);
     return res.status(500).json({ message: error?.message });
   }
 };

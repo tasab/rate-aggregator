@@ -17,15 +17,15 @@ export default (sequelize, DataTypes) => {
       },
       bidRate: {
         type: DataTypes.DECIMAL(15, 6),
-        allowNull: false,
+        allowNull: true,
       },
       sellRate: {
         type: DataTypes.DECIMAL(15, 6),
-        allowNull: false,
+        allowNull: true,
       },
       fetchedAt: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
       },
       rawData: {
         type: DataTypes.TEXT,

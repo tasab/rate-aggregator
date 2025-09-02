@@ -11,17 +11,6 @@ dbRouter.get('/health', async (req, res) => {
   const config = configFile[env];
 
   try {
-    console.log('🔍 NODE_ENV:', process.env.NODE_ENV);
-    console.log('🔍 RAILWAY_ENVIRONMENT:', process.env.RAILWAY_ENVIRONMENT);
-    console.log('🔍 Detected env:', env);
-    console.log('🔍 DATABASE_URL exists:', !!process.env.DATABASE_URL);
-    console.log('🔍 Config:', { ...config, password: '[HIDDEN]' });
-    console.log('🔍 Sequelize config:', {
-      host: db.sequelize.config?.host,
-      database: db.sequelize.config?.database,
-      dialect: db.sequelize.config?.dialect,
-    });
-
     await db.sequelize.authenticate();
 
     const [results] = await db.sequelize.query('SELECT 1 as test');
@@ -53,7 +42,6 @@ dbRouter.get('/health', async (req, res) => {
       uptime: process.uptime(),
     });
   } catch (error) {
-    console.error('Database connection failed:', error);
     res.status(500).json({
       status: 'ERROR',
       database: {

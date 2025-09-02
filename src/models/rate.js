@@ -19,6 +19,19 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      telegramBotToken: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      telegramChatId: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      telegramNotificationsEnabled: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
     },
     {
       tableName: 'rates',

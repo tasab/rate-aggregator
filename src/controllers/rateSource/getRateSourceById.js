@@ -1,10 +1,13 @@
 import db from '../../models/index.js';
 import { getLatestSourceData } from '../../helpers/getLatestSourceData.js';
+import { LOG_ERROR, logger } from '../../utils/logger.js';
 
 export const getRateSourceById = async (req, res) => {
   try {
     const { id } = req.params;
-
+    if (!id) {
+      return res.status(404).send({ error: 'Rate Source ID is required' });
+    }
     const { includeRate } = req.query;
     let filteredRate = null;
 
@@ -25,9 +28,8 @@ export const getRateSourceById = async (req, res) => {
 
     if (includeRate) {
       const latestRateSourceData = await getLatestSourceData(id);
-
-      const availableCurrencyCodes = currentSource.currencies.map(
-        (currency) => currency.code
+      const availableCurrencyCodes = currentSource.currencies.map((currency) =>
+        currency.code?.toLowerCase()
       );
       filteredRate = latestRateSourceData.filter((item) =>
         availableCurrencyCodes.includes(item.currency_code)
@@ -46,7 +48,7 @@ export const getRateSourceById = async (req, res) => {
       currentSource,
     });
   } catch (error) {
-    console.error(error);
+    logger(error, 'Failed to load: getRateSourceById', LOG_ERROR);
     return res.status(500).send({ error: 'Internal server error' });
   }
 };

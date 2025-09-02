@@ -55,7 +55,9 @@ export const getCalculatedRate = async (req, res) => {
 
     const calculatedRates = rateCurrencies.map((currency) => {
       const rateData = enrichedRateSourceData.find((data) => {
-        return data.currency_code === currency.code;
+        return (
+          data?.currency_code?.toLowerCase() === currency?.code?.toLowerCase()
+        );
       });
 
       const rateConfig = currencyConfigs.find(

@@ -1,11 +1,17 @@
-import { MIN_FIN } from '../constants/rateSourceTypes.js';
-import { getMinFinRate } from '../controllers/minFin/getMinFinRate.js';
+import { MIN_FIN, NBU, PRIVATE_BANK } from '../constants/rateSourceTypes.js';
+import { minFinWorker } from '../workers/minFinWorker.js';
+import { privateBankWorker } from '../workers/privateBankWorker.js';
+import { nbuWorker } from '../workers/nbuWorker.js';
 
 export const getRateSourceController = (controllerType) => {
   switch (controllerType) {
     case MIN_FIN:
-      return getMinFinRate;
+      return minFinWorker;
+    case PRIVATE_BANK:
+      return privateBankWorker;
+    case NBU:
+      return nbuWorker;
     default:
-      return getMinFinRate;
+      return minFinWorker;
   }
 };

@@ -1,8 +1,9 @@
 import puppeteer from 'puppeteer';
 
-export const getMinFinInfoJob = async (url) => {
+export const minFinWorker = async (rateSource) => {
+  const url = rateSource?.link;
   if (!url) {
-    throw new Error('url is required to get min-fin rateSource info');
+    throw new Error('URL is required');
   }
 
   const browser = await puppeteer.launch();
@@ -27,14 +28,29 @@ export const getMinFinInfoJob = async (url) => {
     throw new Error('Invalid data structure from MinFin');
   }
 
-  const rates = {};
+  const rates = [];
+
   branchRates.forEach((item) => {
-    const code = item.currency.toUpperCase();
-    rates[code] = {
-      bid: parseFloat(String(item.rate.buy.value).replace(',', '.')),
-      sell: parseFloat(String(item.rate.sell.value).replace(',', '.')),
-      updated: item._updated,
-    };
+    const code = item?.currency?.toLowerCase();
+    const updated = item?._updated;
+
+    // Check if buy/sell values exist and are valid
+    const buyValue = item?.rate?.buy?.value;
+    const sellValue = item?.rate?.sell?.value;
+
+    const bid = buyValue
+      ? parseFloat(String(buyValue).replace(',', '.'))
+      : null;
+    const sell = sellValue
+      ? parseFloat(String(sellValue).replace(',', '.'))
+      : null;
+
+    rates.push({
+      code: code,
+      bid: bid,
+      sell: sell,
+      updated: updated,
+    });
   });
 
   return rates;

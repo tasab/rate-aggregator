@@ -18,6 +18,30 @@ module.exports = {
       }
     }
 
+    // Add rate source 4 with currencies 1, 2, and 4
+    const currencyIdsPrivateBank = [1, 2, 4];
+    for (const currencyId of currencyIdsPrivateBank) {
+      records.push({
+        id: id++,
+        rate_source_id: 4,
+        currency_id: currencyId,
+        created_at: new Date(),
+        updated_at: new Date(),
+      });
+    }
+
+    // Add rate source 4 with currencies 1, 2, and 4
+    const currencyIdsNBU = [1, 2, 4];
+    for (const currencyId of currencyIdsNBU) {
+      records.push({
+        id: id++,
+        rate_source_id: 5,
+        currency_id: currencyId,
+        created_at: new Date(),
+        updated_at: new Date(),
+      });
+    }
+
     await queryInterface.bulkInsert('rate_source_currency', records, {});
 
     await queryInterface.sequelize.query(

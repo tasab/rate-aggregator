@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { LOG_ERROR, logger } from '../utils/logger.js';
 
 const authMiddleware = (req, res, next) => {
   const header = req.headers.authorization;
@@ -13,7 +14,7 @@ const authMiddleware = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (error) {
-    console.log('Failed - authMiddleware', error);
+    logger(error, 'Failed to load: authMiddleware', LOG_ERROR);
     return res.status(401).json({ message: 'Invalid token' });
   }
 };

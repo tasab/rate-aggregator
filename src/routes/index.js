@@ -5,7 +5,9 @@ import currencyRouter from './currencyRouter.js';
 import rateSourceRouter from './rateSourceRouter.js';
 import rateSourceOrderRouter from './rateSourceOrderRouter.js';
 import rateRouter from './rateRouter.js';
-import minFinRouter from './minFinRouter.js';
+import telegramRouter from './telegramRouter.js';
+import workerRouter from './workerRouter.js';
+
 import { Router } from 'express';
 
 const mainRouter = Router();
@@ -16,6 +18,7 @@ mainRouter.use('/currency', authMiddleware, currencyRouter);
 mainRouter.use('/rate-source', authMiddleware, rateSourceRouter);
 mainRouter.use('/rate-source-order', authMiddleware, rateSourceOrderRouter);
 mainRouter.use('/rate', authMiddleware, rateRouter);
-mainRouter.use('/min-fin', authMiddleware, minFinRouter);
+mainRouter.use('/worker', authMiddleware, workerRouter);
+mainRouter.use('/telegram', authMiddleware, telegramRouter);
 
 export default mainRouter;

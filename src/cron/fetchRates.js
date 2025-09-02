@@ -1,79 +1,62 @@
 import db from '../models/index.js';
 import { getRateSourceController } from '../utils/getRateSourceController.js';
+import { LOG_ERROR, LOG_INFO, LOG_SUCCESS, logger } from '../utils/logger.js';
 
-export async function fetchRawRatesFromSources() {
-  console.log('🚀 Starting rate fetching job...');
+export const fetchRawRatesFromSources = async () => {
+  logger(null, 'Starting rate fetching job', LOG_INFO);
 
   try {
     const rateSources = await db.RateSource.findAll({
       where: {
-        link: { [db.Sequelize.Op.ne]: null }, // тільки ті, що мають link
+        link: { [db.Sequelize.Op.ne]: null },
       },
     });
 
-    console.log(`📊 Found ${rateSources.length} rate sources`);
+    logger(null, `Found ${rateSources.length} rate sources`, LOG_INFO);
 
     for (const source of rateSources) {
       try {
         await fetchFromSingleSource(source);
-        console.log(`✅ Successfully fetched from ${source.name}`);
       } catch (error) {
-        console.error(`❌ Error fetching from ${source.name}:`, error.message);
+        logger(error, `Error fetching from ${source.name}:`, LOG_ERROR);
       }
     }
   } catch (error) {
-    console.error('🔥 Fatal error in rate fetching job:', error);
+    logger(error, 'Fatal error in rate fetching job:', LOG_ERROR);
   }
-}
+};
 
-async function fetchFromSingleSource(rateSource) {
-  console.log(`🔄 Fetching rates from ${rateSource.name}...`);
+const fetchFromSingleSource = async (rateSource) => {
+  logger(null, `Fetching rates from ${rateSource.name}...`, LOG_INFO);
 
-  const controller = getRateSourceController(rateSource.type);
+  const controller = getRateSourceController(rateSource.controllerType);
 
   if (!controller) {
     throw new Error(`No controller found for type: ${rateSource.type}`);
   }
 
-  // Створюємо mockReq як очікує оновлений getMinFinRate
-  const mockReq = {
-    query: { url: rateSource.link },
-    rateSource: rateSource,
-  };
+  const rates = await controller(rateSource);
 
-  let rates = null;
-  const mockRes = {
-    status: (code) => ({
-      json: (data) => {
-        if (code === 200) {
-          rates = data;
-        } else {
-          throw new Error(`API returned ${code}: ${JSON.stringify(data)}`);
-        }
-      },
-    }),
-  };
-
-  await controller(mockReq, mockRes);
-
-  if (!rates) {
-    throw new Error('No rates received from controller');
+  if (!rates || !Array.isArray(rates)) {
+    throw new Error('No valid rates array received from controller');
   }
 
   await saveRatesToDatabase(rateSource.id, rates);
-  console.log(
-    `💾 Saved ${Object.keys(rates).length} rates for ${rateSource.name}`
+  logger(
+    null,
+    `Saved ${rates.length} rates for ${rateSource.name}`,
+    LOG_SUCCESS
   );
-}
+};
 
-async function saveRatesToDatabase(rateSourceId, rates) {
+const saveRatesToDatabase = async (rateSourceId, rates) => {
   const fetchedAt = new Date();
   const dataToInsert = [];
 
-  for (const [currencyCode, rateData] of Object.entries(rates)) {
+  for (const rateData of rates) {
     dataToInsert.push({
       rateSourceId,
-      currencyCode,
+      currencyCode: rateData.code,
       bidRate: rateData.bid,
       sellRate: rateData.sell,
       fetchedAt,
@@ -86,4 +69,4 @@ async function saveRatesToDatabase(rateSourceId, rates) {
   await db.RateSourceData.bulkCreate(dataToInsert, {
     ignoreDuplicates: true,
   });
-}
+};

@@ -1,4 +1,5 @@
 import db from '../../models/index.js';
+import { LOG_ERROR, logger } from '../../utils/logger.js';
 
 export const addCurrencyToRate = async (req, res) => {
   try {
@@ -23,7 +24,7 @@ export const addCurrencyToRate = async (req, res) => {
     const addedCurrencies = await rate.addCurrencies(currencyIds);
     res.status(201).json(addedCurrencies);
   } catch (error) {
-    console.log('Failed - addCurrencyToRate', error);
+    logger(error, 'Failed to load: addCurrencyToRate', LOG_ERROR);
     res.status(500).json({ message: 'Internal server error' });
   }
 };

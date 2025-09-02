@@ -1,14 +1,13 @@
 import db from '../models/index.js';
+import { LOG_ERROR, LOG_SUCCESS, logger } from '../utils/logger.js';
 
 export const syncDB = (app, port) =>
   db.sequelize
     .sync({ alter: true })
     .then(() => {
-      // startScheduler();
-
-      console.log('Database synced');
+      logger(null, 'Database synced', LOG_SUCCESS);
       app.listen(port, () =>
-        console.log(`Server is running at http://localhost:${port}`)
+        logger(null, `Server is running at http://localhost:${port}`)
       );
     })
-    .catch((err) => console.error('DB error:', err));
+    .catch((error) => logger(error, 'DB sync error', LOG_ERROR));

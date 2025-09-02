@@ -1,4 +1,5 @@
 import db from '../models/index.js';
+import { LOG_ERROR, logger } from '../utils/logger.js';
 
 export const withTransaction = (handler) => {
   return async (req, res, next) => {
@@ -10,7 +11,7 @@ export const withTransaction = (handler) => {
       await transaction.commit();
     } catch (error) {
       await transaction.rollback();
-      console.log('Failed - withTransaction', error);
+      logger(error, 'Failed to load: withTransaction', LOG_ERROR);
       return res.status(500).json({ message: 'Internal server error' });
     }
   };
