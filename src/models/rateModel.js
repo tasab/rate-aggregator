@@ -32,6 +32,11 @@ export default (sequelize, DataTypes) => {
         defaultValue: false,
         allowNull: false,
       },
+      private: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
     },
     {
       tableName: 'rates',

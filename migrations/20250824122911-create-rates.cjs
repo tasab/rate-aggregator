@@ -34,6 +34,24 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
+      telegram_bot_token: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      telegram_chat_id: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      telegram_notifications_enabled: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
+      private: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

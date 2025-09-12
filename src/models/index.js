@@ -1,13 +1,13 @@
 import Sequelize, { DataTypes } from 'sequelize';
 import config from 'config';
 
-import UserModel from './user.js';
-import RateModel from './rate.js';
-import CurrencyModel from './currency.js';
-import RateSourceModel from './rateSource.js';
-import CurrencyRateConfigModel from './currencyRateConfig.js';
-import RateSourceOrderModer from './rateSourceOrder.js';
-import RateSourceDataModel from './rateSourceData.js';
+import UserModel from './userModel.js';
+import RateModel from './rateModel.js';
+import CurrencyModel from './currencyModel.js';
+import RateSourceModel from './rateSourceModel.js';
+import CurrencyRateConfigModel from './currencyRateConfigModel.js';
+import RateSourceOrderModer from './rateSourceOrderModel.js';
+import RateSourceDataModel from './rateSourceDataModel.js';
 
 const db = {};
 

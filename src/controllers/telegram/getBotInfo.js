@@ -29,6 +29,7 @@ export const getBotInfo = async (req, res) => {
         },
       });
     } catch (telegramError) {
+      console.log(telegramError, 'telegramError111');
       return res.status(400).json({
         success: false,
         message: 'Невірний bot token',
