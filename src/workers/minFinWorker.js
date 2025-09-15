@@ -1,4 +1,5 @@
 import puppeteer from 'puppeteer';
+import { customPuppeteer } from '../puppeteer/customPuppeteer.js';
 
 export const minFinWorker = async (rateSource) => {
   const url = rateSource?.link;
@@ -6,7 +7,7 @@ export const minFinWorker = async (rateSource) => {
     throw new Error('URL is required');
   }
 
-  const browser = await puppeteer.launch();
+  const browser = await customPuppeteer();
   const page = await browser.newPage();
 
   await page.goto(url, {
