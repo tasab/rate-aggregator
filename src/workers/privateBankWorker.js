@@ -2,7 +2,7 @@ import { customPuppeteer } from '../puppeteer/customPuppeteer.js';
 
 export const privateBankWorker = async (rateSource) => {
   const url = rateSource?.link;
-
+  // test
   if (!url) {
     throw new Error('URL is required');
   }
