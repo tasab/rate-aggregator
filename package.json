@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development NODE_TLS_REJECT_UNAUTHORIZED=0 nodemon --env-file=.env index.js",
+    "dev": "cross-env NODE_ENV=development nodemon --env-file=.env index.js",
     "prod": "cross-env NODE_ENV=production node --env-file=.env index.js",
     "db:migrate": "node -r dotenv/config ./node_modules/.bin/sequelize-cli db:migrate",
     "db:migrate:undo:all": "node -r dotenv/config ./node_modules/.bin/sequelize-cli db:migrate:undo:all",
@@ -13,7 +13,7 @@
     "db:seed:undo:all": "node -r dotenv/config ./node_modules/.bin/sequelize-cli db:seed:undo:all",
     "db:create": "node -r dotenv/config ./node_modules/.bin/sequelize-cli db:create",
     "db:drop": "node -r dotenv/config ./node_modules/.bin/sequelize-cli db:drop",
-    "test": "echo 1"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",

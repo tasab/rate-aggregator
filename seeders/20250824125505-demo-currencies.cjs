@@ -68,6 +68,34 @@ module.exports = {
           created_at: new Date(),
           updated_at: new Date(),
         },
+        {
+          id: 10,
+          code: 'AUD',
+          full_name: 'Australian dollar',
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+        {
+          id: 11,
+          code: 'HUF',
+          full_name: 'Hungarian forint',
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+        {
+          id: 12,
+          code: 'JPY',
+          full_name: 'Japanese yen',
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
+        {
+          id: 13,
+          code: 'CNY',
+          full_name: 'Renminbi',
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
       ],
       {}
     );

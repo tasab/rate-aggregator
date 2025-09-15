@@ -27,12 +27,25 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      telegramMessageHeader: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      telegramMessageFooter: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      telegramSuccessConnection: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
       telegramNotificationsEnabled: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
         allowNull: false,
       },
-      private: {
+      isPrivateRate: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
         allowNull: false,

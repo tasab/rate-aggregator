@@ -2,7 +2,18 @@ import { withTransaction } from '../../middleware/withTransaction.js';
 import db from '../../models/index.js';
 
 export const updateRate = withTransaction(async (req, res) => {
-  const { id, name, rateSourceId, currencies } = req.body;
+  const {
+    id,
+    name,
+    rateSourceId,
+    currencies,
+    isPrivateRate,
+    telegramChatId,
+    telegramBotToken,
+    telegramMessageFooter,
+    telegramMessageHeader,
+    telegramNotificationsEnabled,
+  } = req.body;
   const userId = req?.user?.id;
 
   if (!id) {
@@ -21,7 +32,16 @@ export const updateRate = withTransaction(async (req, res) => {
 
   // Update rate basic info
   await existingRate.update(
-    { name, rateSourceId },
+    {
+      name,
+      rateSourceId,
+      isPrivateRate,
+      telegramChatId,
+      telegramBotToken,
+      telegramMessageFooter,
+      telegramMessageHeader,
+      telegramNotificationsEnabled,
+    },
     { transaction: req.transaction }
   );
 

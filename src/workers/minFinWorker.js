@@ -6,7 +6,15 @@ export const minFinWorker = async (rateSource) => {
     throw new Error('URL is required');
   }
 
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    headless: 'new',
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--memory-pressure-off',
+    ],
+  });
   const page = await browser.newPage();
 
   await page.goto(url, {

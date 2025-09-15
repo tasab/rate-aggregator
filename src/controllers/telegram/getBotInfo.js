@@ -15,10 +15,11 @@ export const getBotInfo = async (req, res) => {
 
     try {
       const botInfo = await bot.getMe();
+      const updates = await bot.getUpdates();
 
       return res.json({
         success: true,
-        data: {
+        botInfo: {
           id: botInfo.id,
           isBot: botInfo.is_bot,
           firstName: botInfo.first_name,
@@ -27,6 +28,7 @@ export const getBotInfo = async (req, res) => {
           canReadAllGroupMessages: botInfo.can_read_all_group_messages,
           supportsInlineQueries: botInfo.supports_inline_queries,
         },
+        updates,
       });
     } catch (telegramError) {
       console.log(telegramError, 'telegramError111');

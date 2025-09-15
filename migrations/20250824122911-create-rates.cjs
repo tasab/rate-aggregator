@@ -42,12 +42,25 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      telegram_message_header: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      telegram_message_footer: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       telegram_notifications_enabled: {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
         allowNull: false,
       },
-      private: {
+      telegram_success_connection: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
+      is_private_rate: {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
         allowNull: false,

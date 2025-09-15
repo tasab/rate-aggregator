@@ -2,11 +2,27 @@ import { withTransaction } from '../../middleware/withTransaction.js';
 import db from '../../models/index.js';
 
 export const createRate = withTransaction(async (req, res) => {
-  const { name, rateSourceId, currencies } = req.body;
+  const {
+    name,
+    rateSourceId,
+    currencies,
+    isPrivateRate,
+    telegramChatId,
+    telegramBotToken,
+    telegramNotificationsEnabled,
+  } = req.body;
   const userId = req?.user?.id;
 
   const rate = await db.Rate.create(
-    { name, userId, rateSourceId },
+    {
+      name,
+      userId,
+      rateSourceId,
+      isPrivateRate,
+      telegramChatId,
+      telegramBotToken,
+      telegramNotificationsEnabled,
+    },
     { transaction: req.transaction }
   );
 
