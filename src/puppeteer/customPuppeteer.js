@@ -18,9 +18,5 @@ export const customPuppeteer = () => {
     ],
   };
 
-  if (process.env.NODE_ENV === 'production') {
-    puppeteerConfig.executablePath = '/usr/bin/chromium-browser';
-  }
-
   return puppeteer.launch(puppeteerConfig); // return замість export
 };
