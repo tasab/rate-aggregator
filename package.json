@@ -13,7 +13,6 @@
     "db:seed:undo:all": "node -r dotenv/config ./node_modules/.bin/sequelize-cli db:seed:undo:all",
     "db:create": "node -r dotenv/config ./node_modules/.bin/sequelize-cli db:create",
     "db:drop": "node -r dotenv/config ./node_modules/.bin/sequelize-cli db:drop",
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
