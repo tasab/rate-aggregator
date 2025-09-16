@@ -18,5 +18,5 @@ export const customPuppeteer = () => {
     ],
   };
 
-  return puppeteer.launch(puppeteerConfig); // return замість export
+  return puppeteer.launch(puppeteerConfig);
 };

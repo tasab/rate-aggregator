@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon --env-file=.env index.js",
-    "prod": "cross-env NODE_ENV=production node index.js",
+    "prod": "node index.js",
     "db:migrate": "node -r dotenv/config ./node_modules/.bin/sequelize-cli db:migrate",
     "db:migrate:undo:all": "node -r dotenv/config ./node_modules/.bin/sequelize-cli db:migrate:undo:all",
     "db:seed:all": "node -r dotenv/config ./node_modules/.bin/sequelize-cli db:seed:all",

@@ -1,7 +1,7 @@
 import db from '../models/index.js';
 import sequelize, { Op } from 'sequelize';
 
-export const getLatestSourceData = async (rateSourceId) => {
+export const getLatestRateSourceData = async (rateSourceId) => {
   const latestRateSourceData = await db.RateSourceData.findAll({
     where: { rate_source_id: rateSourceId },
     attributes: [

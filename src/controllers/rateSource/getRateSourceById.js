@@ -1,6 +1,6 @@
 import db from '../../models/index.js';
-import { getLatestSourceData } from '../../helpers/getLatestSourceData.js';
 import { LOG_ERROR, logger } from '../../utils/logger.js';
+import { getLatestRateSourceData } from '../../query/getLatestRateSourceData.js';
 
 export const getRateSourceById = async (req, res) => {
   try {
@@ -27,7 +27,7 @@ export const getRateSourceById = async (req, res) => {
     }
 
     if (includeRate) {
-      const latestRateSourceData = await getLatestSourceData(id);
+      const latestRateSourceData = await getLatestRateSourceData(id);
       const availableCurrencyCodes = currentSource.currencies.map((currency) =>
         currency.code?.toLowerCase()
       );

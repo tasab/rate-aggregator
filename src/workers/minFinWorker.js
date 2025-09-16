@@ -1,4 +1,3 @@
-import puppeteer from 'puppeteer';
 import { customPuppeteer } from '../puppeteer/customPuppeteer.js';
 
 export const minFinWorker = async (rateSource) => {
@@ -50,7 +49,7 @@ export const minFinWorker = async (rateSource) => {
       code: code,
       bid: bid,
       sell: sell,
-      updated: updated,
+      updated,
     });
   });
 

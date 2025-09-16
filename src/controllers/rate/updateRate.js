@@ -6,7 +6,7 @@ export const updateRate = withTransaction(async (req, res) => {
     id,
     name,
     rateSourceId,
-    currencies,
+    currencyConfigs,
     isPrivateRate,
     telegramChatId,
     telegramBotToken,
@@ -14,23 +14,22 @@ export const updateRate = withTransaction(async (req, res) => {
     telegramMessageHeader,
     telegramNotificationsEnabled,
   } = req.body;
+  const transaction = req.transaction;
   const userId = req?.user?.id;
 
   if (!id) {
     return res.status(400).json({ error: 'Rate ID is required' });
   }
 
-  // Find existing rate
   const existingRate = await db.Rate.findOne({
     where: { id, userId },
-    transaction: req.transaction,
+    transaction,
   });
 
   if (!existingRate) {
     return res.status(404).json({ error: 'Rate not found' });
   }
 
-  // Update rate basic info
   await existingRate.update(
     {
       name,
@@ -42,27 +41,21 @@ export const updateRate = withTransaction(async (req, res) => {
       telegramMessageHeader,
       telegramNotificationsEnabled,
     },
-    { transaction: req.transaction }
+    { transaction }
   );
 
-  if (currencies && currencies.length > 0) {
-    // Remove existing currency associations and configs
+  if (currencyConfigs && currencyConfigs.length > 0) {
     await db.CurrencyRateConfig.destroy({
       where: { rateId: id },
-      transaction: req.transaction,
+      transaction,
     });
 
-    // Remove currency associations
-    await existingRate.setCurrencies([], { transaction: req.transaction });
+    await existingRate.setCurrencies([], { transaction });
 
-    // Add new currency associations
-    const currencyIds = currencies.map((c) => c.id);
-    await existingRate.addCurrencies(currencyIds, {
-      transaction: req.transaction,
-    });
+    const currencyIds = currencyConfigs.map((c) => c.id);
+    await existingRate.addCurrencies(currencyIds, { transaction });
 
-    // Create new currency rate configs
-    for (const item of currencies) {
+    for (const item of currencyConfigs) {
       const {
         id: currencyId,
         effectiveFrom,
@@ -92,7 +85,7 @@ export const updateRate = withTransaction(async (req, res) => {
           sellRoundingDepth: sellRoundingDepth ?? null,
           sellRoundingType: sellRoundingType ?? null,
         },
-        { transaction: req.transaction }
+        { transaction }
       );
     }
   }

@@ -1,22 +1,11 @@
 import cron from 'node-cron';
-import { fetchRawRatesFromSources } from './fetchRates.js';
-import { LOG_INFO, logger } from '../utils/logger.js';
-import { sendRateMessage } from './sendRateMessage.js';
+import { sendRateMessage } from '../helpers/sendRateMessage.js';
 
 export const startSendTelegramMessage = () => {
   const isProd = process.env.NODE_ENV !== 'development';
+  const cronTimer = isProd ? '0 * * * *' : '30 */2 * * *';
 
-  // Development environment
-  cron.schedule('30 */2 * * *', async () => {
-    logger(null, 'Rate fetching cron job triggered (dev)', LOG_INFO);
-    await fetchRawRatesFromSources();
+  cron.schedule(cronTimer, async () => {
     await sendRateMessage();
   });
-
-  setTimeout(
-    async () => {
-      await sendRateMessage();
-    },
-    isProd ? 5000 : 3600000
-  ); // 1 hour
 };

@@ -1,15 +1,11 @@
 import cron from 'node-cron';
-import { fetchRawRatesFromSources } from './fetchRates.js';
-import { LOG_INFO, logger } from '../utils/logger.js';
+import { fetchRawRatesFromSources } from '../helpers/fetchRates.js';
 
 export const startFetchRateSource = () => {
   const isProd = process.env.NODE_ENV !== 'development';
+  const cronTimer = isProd ? '0 * * * *' : '30 */2 * * *';
 
-  // Запускаємо кожні 30 хвилин
-  cron.schedule('30 */2 * * *', async () => {
-    logger(null, 'Rate fetching cron job triggered', LOG_INFO);
+  cron.schedule(cronTimer, async () => {
     await fetchRawRatesFromSources();
   });
-
-  setTimeout(fetchRawRatesFromSources, isProd ? 5000 : 3600000); // через 5 секунд після старту
 };

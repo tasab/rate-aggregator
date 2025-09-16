@@ -36,17 +36,17 @@ export const parseRate = (rate, config) => {
 
   const adjustedBid = applyRounding(
     bidMarginPrice,
-    config.bidRoundingDepth,
-    config.bidRoundingType,
-    config.bidShouldRound
+    config?.bidRoundingDepth,
+    config?.bidRoundingType,
+    config?.bidShouldRound
   );
 
   const sellMarginPrice = applyMargin(rate?.sell, config?.sellMargin);
   const adjustedSell = applyRounding(
     sellMarginPrice,
-    config.sellRoundingDepth,
-    config.sellRoundingType,
-    config.sellShouldRound
+    config?.sellRoundingDepth,
+    config?.sellRoundingType,
+    config?.sellShouldRound
   );
 
   return {

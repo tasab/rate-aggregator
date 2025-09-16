@@ -9,6 +9,7 @@ export const privateBankWorker = async (rateSource) => {
 
   const browser = await customPuppeteer();
   const page = await browser.newPage();
+  const updated = new Date().toString();
 
   await page.goto(url, {
     waitUntil: 'networkidle2',
@@ -37,6 +38,7 @@ export const privateBankWorker = async (rateSource) => {
         code: currencyName?.toLowerCase(),
         bid: bid,
         sell: sell,
+        updated,
       });
     });
 

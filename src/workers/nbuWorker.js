@@ -1,4 +1,3 @@
-import puppeteer from 'puppeteer';
 import { customPuppeteer } from '../puppeteer/customPuppeteer.js';
 
 export const nbuWorker = async (rateSource) => {
@@ -39,7 +38,7 @@ export const nbuWorker = async (rateSource) => {
         code: currencyCode.toLowerCase(),
         sell: null,
         bid: rate,
-        updated: updated,
+        updated,
       });
     });
 

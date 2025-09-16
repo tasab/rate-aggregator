@@ -13,12 +13,6 @@ export const getAllRates = async (req, res) => {
       where: { userId },
       include: [
         {
-          model: db.Currency,
-          through: { attributes: [] },
-          attributes: ['id', 'code', 'fullName'],
-          as: 'currencies',
-        },
-        {
           model: db.CurrencyRateConfig,
           as: 'currencyConfigs',
           include: [

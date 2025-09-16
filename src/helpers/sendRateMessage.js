@@ -1,9 +1,9 @@
-import { LOG_ERROR, LOG_INFO, LOG_SUCCESS, logger } from '../utils/logger.js';
-import db from '../models/index.js';
+import { LOG_ERROR, LOG_SUCCESS, logger } from '../utils/logger.js';
 import TelegramBot from 'node-telegram-bot-api';
-import { getLatestSourceData } from '../helpers/getLatestSourceData.js';
 import { parseRate } from '../utils/rateUtils.js';
 import RATE_EMOJI from '../constants/rateEmoji.js';
+import { findAllRatesToTelegramMessage } from '../query/findAllRatesToTelegramMessage.js';
+import { getLatestRateSourceData } from '../query/getLatestRateSourceData.js';
 
 const getCurrencyEmoji = (currencyCode) => {
   return RATE_EMOJI?.[currencyCode?.toLowerCase()] || '💱';
@@ -11,46 +11,7 @@ const getCurrencyEmoji = (currencyCode) => {
 
 export const sendRateMessage = async () => {
   try {
-    logger(null, 'Starting telegram rate notifications', LOG_INFO);
-
-    // Fetch all rates with telegram settings enabled
-    const rates = await db.Rate.findAll({
-      where: {
-        telegramBotToken: { [db.Sequelize.Op.ne]: null },
-        telegramChatId: { [db.Sequelize.Op.ne]: null },
-        telegramNotificationsEnabled: true,
-      },
-      include: [
-        {
-          model: db.Currency,
-          through: { attributes: [] },
-          attributes: ['id', 'code', 'fullName'],
-          as: 'currencies',
-        },
-        {
-          model: db.CurrencyRateConfig,
-          as: 'currencyConfigs',
-          include: [
-            {
-              model: db.Currency,
-              attributes: ['id', 'code'],
-              as: 'currency',
-            },
-          ],
-        },
-        {
-          model: db.RateSource,
-          attributes: ['id', 'name', 'type', 'location', 'link'],
-          as: 'rateSource',
-        },
-      ],
-    });
-
-    logger(
-      null,
-      `Found ${rates.length} rates with telegram notifications enabled`,
-      LOG_INFO
-    );
+    const rates = await findAllRatesToTelegramMessage();
 
     for (const rate of rates) {
       try {
@@ -63,8 +24,6 @@ export const sendRateMessage = async () => {
         );
       }
     }
-
-    logger(null, 'Telegram rate notifications completed', LOG_SUCCESS);
   } catch (error) {
     logger(error, 'Fatal error in telegram rate notifications:', LOG_ERROR);
   }
@@ -73,8 +32,9 @@ export const sendRateMessage = async () => {
 const sendSingleRateMessage = async (rate) => {
   const bot = new TelegramBot(rate.telegramBotToken);
 
-  // Get latest source data
-  const enrichedRateSourceData = await getLatestSourceData(rate.rateSource?.id);
+  const enrichedRateSourceData = await getLatestRateSourceData(
+    rate?.rateSource?.id
+  );
 
   if (!enrichedRateSourceData || enrichedRateSourceData.length === 0) {
     throw new Error(
@@ -82,7 +42,6 @@ const sendSingleRateMessage = async (rate) => {
     );
   }
 
-  // Calculate rates for each currency
   const rateMessages = [];
 
   for (const currency of rate.currencies) {
@@ -105,7 +64,7 @@ const sendSingleRateMessage = async (rate) => {
         },
         rateConfig
       );
-      console.log(currency, 'currency1');
+
       const emojiFlag = getCurrencyEmoji(currency?.code?.toLowerCase());
       const currencyCode = currency.code.toUpperCase();
       const buy =
@@ -121,7 +80,6 @@ const sendSingleRateMessage = async (rate) => {
     throw new Error(`No valid rate data found for rate ${rate.id}`);
   }
 
-  // Construct full message
   let message = '';
 
   if (rate.telegramMessageHeader) {
@@ -134,7 +92,6 @@ const sendSingleRateMessage = async (rate) => {
     message += `\n\n${rate.telegramMessageFooter}`;
   }
 
-  // Send message
   await bot.sendMessage(rate.telegramChatId, message);
 
   logger(

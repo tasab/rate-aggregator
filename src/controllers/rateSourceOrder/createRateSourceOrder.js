@@ -1,10 +1,11 @@
 import db from '../../models/index.js';
 import { withTransaction } from '../../middleware/withTransaction.js';
+import { LOG_ERROR, logger } from '../../utils/logger.js';
 
 export const createRateSourceOrder = withTransaction(async (req, res) => {
   const {
     name,
-    status = 'PENDING', // Default status
+    status = 'PENDING',
     city,
     link,
     phoneNumber,
@@ -12,7 +13,6 @@ export const createRateSourceOrder = withTransaction(async (req, res) => {
   } = req.body;
   const userId = req?.user?.id;
 
-  // Input validation
   if (!name || !city || !link) {
     return res.status(400).json({
       error: 'Name, city, link are required',
@@ -22,7 +22,6 @@ export const createRateSourceOrder = withTransaction(async (req, res) => {
   const { transaction } = req;
 
   try {
-    // Create a new RateSourceOrder with the provided data
     const rateSourceOrder = await db.RateSourceOrder.create(
       {
         name,
@@ -41,7 +40,7 @@ export const createRateSourceOrder = withTransaction(async (req, res) => {
       rateSourceOrder,
     });
   } catch (error) {
-    console.error('Failed to create RateSourceOrder:', error);
+    logger(error, 'Failed load createRateSourceOrder:', LOG_ERROR);
     return res.status(500).json({ error: 'Internal server error' });
   }
 });

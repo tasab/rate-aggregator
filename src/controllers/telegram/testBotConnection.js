@@ -1,10 +1,10 @@
 import TelegramBot from 'node-telegram-bot-api';
+import { LOG_ERROR, logger } from '../../utils/logger.js';
 
 export const testBotConnection = async (req, res) => {
   try {
     const { botToken, chatId } = req.body;
 
-    // Валідація вхідних даних
     if (!botToken || !chatId) {
       return res.status(400).json({
         success: false,
@@ -15,10 +15,8 @@ export const testBotConnection = async (req, res) => {
     const bot = new TelegramBot(botToken);
 
     try {
-      // Спробуємо отримати інформацію про чат
       const chatInfo = await bot.getChat(chatId);
 
-      // Надсилаємо тестове повідомлення
       const testMessage = `
       🧪 Тестове повідомлення
       ✅ З'єднання успішно налаштовано!
@@ -29,7 +27,6 @@ export const testBotConnection = async (req, res) => {
 
       const sentMessage = await bot.sendMessage(chatId, testMessage);
 
-      // Повертаємо успішну відповідь з інформацією
       return res.json({
         success: true,
         message: 'Тестове повідомлення надіслано успішно!',
@@ -52,8 +49,6 @@ export const testBotConnection = async (req, res) => {
         },
       });
     } catch (telegramError) {
-      console.error('Telegram API Error:', telegramError);
-
       let errorMessage = 'Невідома помилка Telegram API';
 
       if (telegramError.code === 'ETELEGRAM') {
@@ -87,7 +82,7 @@ export const testBotConnection = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error('Test connection error:', error);
+    logger(error, 'Failed to load: testBotConnection', LOG_ERROR);
     return res.status(500).json({
       success: false,
       message: 'Внутрішня помилка сервера',

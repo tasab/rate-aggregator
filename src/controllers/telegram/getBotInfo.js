@@ -31,7 +31,6 @@ export const getBotInfo = async (req, res) => {
         updates,
       });
     } catch (telegramError) {
-      console.log(telegramError, 'telegramError111');
       return res.status(400).json({
         success: false,
         message: 'Невірний bot token',
@@ -39,7 +38,6 @@ export const getBotInfo = async (req, res) => {
       });
     }
   } catch (error) {
-    console.error('Bot info error:', error);
     return res.status(500).json({
       success: false,
       message: 'Внутрішня помилка сервера',

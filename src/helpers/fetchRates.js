@@ -1,18 +1,14 @@
 import db from '../models/index.js';
 import { getRateSourceController } from '../utils/getRateSourceController.js';
-import { LOG_ERROR, LOG_INFO, LOG_SUCCESS, logger } from '../utils/logger.js';
+import { LOG_ERROR, logger } from '../utils/logger.js';
 
 export const fetchRawRatesFromSources = async () => {
-  logger(null, 'Starting rate fetching job', LOG_INFO);
-
   try {
     const rateSources = await db.RateSource.findAll({
       where: {
         link: { [db.Sequelize.Op.ne]: null },
       },
     });
-
-    logger(null, `Found ${rateSources.length} rate sources`, LOG_INFO);
 
     for (const source of rateSources) {
       try {
@@ -27,8 +23,6 @@ export const fetchRawRatesFromSources = async () => {
 };
 
 const fetchFromSingleSource = async (rateSource) => {
-  logger(null, `Fetching rates from ${rateSource.name}...`, LOG_INFO);
-
   const controller = getRateSourceController(rateSource.controllerType);
 
   if (!controller) {
@@ -42,11 +36,6 @@ const fetchFromSingleSource = async (rateSource) => {
   }
 
   await saveRatesToDatabase(rateSource.id, rates);
-  logger(
-    null,
-    `Saved ${rates.length} rates for ${rateSource.name}`,
-    LOG_SUCCESS
-  );
 };
 
 const saveRatesToDatabase = async (rateSourceId, rates) => {
