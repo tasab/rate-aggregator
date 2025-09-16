@@ -108,8 +108,10 @@ const sendSingleRateMessage = async (rate) => {
       console.log(currency, 'currency1');
       const emojiFlag = getCurrencyEmoji(currency?.code?.toLowerCase());
       const currencyCode = currency.code.toUpperCase();
-      const buy = calculatedRate.bid?.toFixed(2) || 'N/A';
-      const sell = calculatedRate.sell?.toFixed(2) || 'N/A';
+      const buy =
+        parseFloat(calculatedRate.bid?.toFixed(2))?.toString() || 'N/A';
+      const sell =
+        parseFloat(calculatedRate.sell?.toFixed(2))?.toString() || 'N/A';
 
       rateMessages.push(`${emojiFlag} ${currencyCode}: ${buy} - ${sell}`);
     }
