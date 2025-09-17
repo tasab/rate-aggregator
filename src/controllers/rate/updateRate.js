@@ -13,6 +13,8 @@ export const updateRate = withTransaction(async (req, res) => {
     telegramMessageFooter,
     telegramMessageHeader,
     telegramNotificationsEnabled,
+    startWorkingTime,
+    endWorkingTime,
   } = req.body;
   const transaction = req.transaction;
   const userId = req?.user?.id;
@@ -40,6 +42,8 @@ export const updateRate = withTransaction(async (req, res) => {
       telegramMessageFooter,
       telegramMessageHeader,
       telegramNotificationsEnabled,
+      startWorkingTime,
+      endWorkingTime,
     },
     { transaction }
   );

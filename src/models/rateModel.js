@@ -50,6 +50,14 @@ export default (sequelize, DataTypes) => {
         defaultValue: false,
         allowNull: false,
       },
+      startWorkingTime: {
+        type: DataTypes.TIME,
+        allowNull: true,
+      },
+      endWorkingTime: {
+        type: DataTypes.TIME,
+        allowNull: true,
+      },
     },
     {
       tableName: 'rates',

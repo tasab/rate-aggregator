@@ -5,11 +5,13 @@ export const createRate = withTransaction(async (req, res) => {
   const {
     name,
     rateSourceId,
-    currencies,
+    currencyConfigs,
     isPrivateRate,
     telegramChatId,
     telegramBotToken,
     telegramNotificationsEnabled,
+    startWorkingTime,
+    endWorkingTime,
   } = req.body;
   const userId = req?.user?.id;
 
@@ -22,14 +24,16 @@ export const createRate = withTransaction(async (req, res) => {
       telegramChatId,
       telegramBotToken,
       telegramNotificationsEnabled,
+      startWorkingTime,
+      endWorkingTime,
     },
     { transaction: req.transaction }
   );
 
-  const currencyIds = currencies.map((c) => c.id);
+  const currencyIds = currencyConfigs.map((c) => c.id);
 
   await rate.addCurrencies(currencyIds, { transaction: req.transaction });
-  for (const item of currencies) {
+  for (const item of currencyConfigs) {
     const {
       id,
       effectiveFrom,
