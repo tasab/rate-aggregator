@@ -10,6 +10,8 @@ export const createRate = withTransaction(async (req, res) => {
     telegramChatId,
     telegramBotToken,
     telegramNotificationsEnabled,
+    telegramMessageHeader,
+    telegramMessageFooter,
     startWorkingTime,
     endWorkingTime,
   } = req.body;
@@ -23,6 +25,8 @@ export const createRate = withTransaction(async (req, res) => {
       isPrivateRate,
       telegramChatId,
       telegramBotToken,
+      telegramMessageHeader,
+      telegramMessageFooter,
       telegramNotificationsEnabled,
       startWorkingTime,
       endWorkingTime,

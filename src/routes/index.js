@@ -9,11 +9,15 @@ import telegramRouter from './telegramRouter.js';
 import workerRouter from './workerRouter.js';
 
 import { Router } from 'express';
+import { verifyToken } from '../controllers/auth/verifyToken.js';
+import { getServerTime } from '../controllers/time.js';
 
 const mainRouter = Router();
 
 mainRouter.post('/register', register);
 mainRouter.post('/login', login);
+mainRouter.get('/verify-token', verifyToken);
+mainRouter.get('/time', getServerTime);
 mainRouter.use('/currency', authMiddleware, currencyRouter);
 mainRouter.use('/rate-source', authMiddleware, rateSourceRouter);
 mainRouter.use('/rate-source-order', authMiddleware, rateSourceOrderRouter);

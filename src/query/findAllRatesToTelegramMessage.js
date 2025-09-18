@@ -14,10 +14,27 @@ export const findAllRatesToTelegramMessage = () => {
           startWorkingTime: null,
           endWorkingTime: null,
         },
-        // Include rates where current time is within working hours
+        // Normal time range (same day): start <= current <= end
         {
-          startWorkingTime: { [db.Sequelize.Op.lte]: currentTime },
-          endWorkingTime: { [db.Sequelize.Op.gte]: currentTime },
+          startWorkingTime: {
+            [db.Sequelize.Op.lte]: db.Sequelize.col('end_working_time'),
+          },
+          [db.Sequelize.Op.and]: [
+            { startWorkingTime: { [db.Sequelize.Op.lte]: currentTime } },
+            { endWorkingTime: { [db.Sequelize.Op.gte]: currentTime } },
+          ],
+        },
+        // Overnight range (crosses midnight): start > end
+        {
+          startWorkingTime: {
+            [db.Sequelize.Op.gt]: db.Sequelize.col('end_working_time'),
+          },
+          [db.Sequelize.Op.or]: [
+            // Current time is after start time (same day)
+            { startWorkingTime: { [db.Sequelize.Op.lte]: currentTime } },
+            // Current time is before end time (next day)
+            { endWorkingTime: { [db.Sequelize.Op.gte]: currentTime } },
+          ],
         },
       ],
     },
