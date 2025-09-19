@@ -1,15 +1,11 @@
-import { customPuppeteer } from '../puppeteer/customPuppeteer.js';
+import { withBrowser } from '../middleware/withBrowser.js';
 
-export const privateBankWorker = async (rateSource) => {
+const privateBankWorkerCore = async (page, rateSource) => {
   const url = rateSource?.link;
 
   if (!url) {
     throw new Error('URL is required');
   }
-
-  const browser = await customPuppeteer();
-  const page = await browser.newPage();
-  const updated = new Date().toString();
 
   await page.goto(url, {
     waitUntil: 'networkidle2',
@@ -38,17 +34,17 @@ export const privateBankWorker = async (rateSource) => {
         code: currencyName?.toLowerCase(),
         bid: bid,
         sell: sell,
-        updated,
+        updated: new Date().toString(),
       });
     });
 
     return rates;
   });
 
-  await browser.close();
-
   if (!pageRates || !Array.isArray(pageRates)) {
     throw new Error('Invalid data structure from privateBankWorker');
   }
   return pageRates;
 };
+
+export const privateBankWorker = withBrowser(privateBankWorkerCore);

@@ -1,13 +1,11 @@
-import { customPuppeteer } from '../puppeteer/customPuppeteer.js';
+import { withBrowser } from '../middleware/withBrowser.js';
 
-export const nbuWorker = async (rateSource) => {
+const nbuWorkerCore = async (page, rateSource) => {
   const url = rateSource?.link;
 
   if (!url) {
     throw new Error('URL is required');
   }
-  const browser = await customPuppeteer();
-  const page = await browser.newPage();
 
   await page.goto(url, {
     waitUntil: 'networkidle2',
@@ -18,7 +16,6 @@ export const nbuWorker = async (rateSource) => {
     if (!widget) return [];
 
     const results = [];
-    const updated = new Date().toString();
 
     const currencyPairs = widget.querySelectorAll('.currency-pairs');
 
@@ -38,17 +35,18 @@ export const nbuWorker = async (rateSource) => {
         code: currencyCode.toLowerCase(),
         sell: null,
         bid: rate,
-        updated,
+        updated: new Date().toString(),
       });
     });
 
     return results;
   });
 
-  await browser.close();
-
   if (!pageRates || !Array.isArray(pageRates)) {
     throw new Error('Invalid data structure from nbuWorker');
   }
+
   return pageRates;
 };
+
+export const nbuWorker = withBrowser(nbuWorkerCore);

@@ -1,13 +1,10 @@
-import { customPuppeteer } from '../puppeteer/customPuppeteer.js';
+import { withBrowser } from '../middleware/withBrowser.js';
 
-export const minFinWorker = async (rateSource) => {
+const minFinWorkerCore = async (page, rateSource) => {
   const url = rateSource?.link;
   if (!url) {
     throw new Error('URL is required');
   }
-
-  const browser = await customPuppeteer();
-  const page = await browser.newPage();
 
   await page.goto(url, {
     waitUntil: 'networkidle2',
@@ -17,8 +14,6 @@ export const minFinWorker = async (rateSource) => {
     const script = document.querySelector('#__NEXT_DATA__');
     return script.innerHTML;
   });
-
-  await browser.close();
 
   const parsedInitialState = JSON.parse(pageResult);
   const branchRates =
@@ -55,3 +50,5 @@ export const minFinWorker = async (rateSource) => {
 
   return rates;
 };
+
+export const minFinWorker = withBrowser(minFinWorkerCore);
