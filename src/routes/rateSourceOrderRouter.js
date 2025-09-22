@@ -3,7 +3,7 @@ import { createRateSourceOrder } from '../controllers/rateSourceOrder/createRate
 import { getRateSourceOrdersByUser } from '../controllers/rateSourceOrder/getRateSourceOrdersByUser.js';
 const router = Router();
 
-router.get('/', getRateSourceOrdersByUser);
-router.post('/', createRateSourceOrder);
+router.get('/rate-source-order/', getRateSourceOrdersByUser);
+router.post('/rate-source-order/', createRateSourceOrder);
 
 export default router;

@@ -4,13 +4,7 @@ export const getRateWithCurrencyConfigs = (rateId) =>
   db.Rate.findByPk(rateId, {
     include: [
       {
-        model: db.Currency,
-        through: { attributes: [] },
-        attributes: ['id', 'code', 'fullName'],
-        as: 'currencies',
-      },
-      {
-        model: db.CurrencyRateConfig,
+        model: db.RateCurrencyConfig,
         as: 'currencyConfigs',
         include: [
           {

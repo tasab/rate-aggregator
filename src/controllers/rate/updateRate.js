@@ -49,15 +49,10 @@ export const updateRate = withTransaction(async (req, res) => {
   );
 
   if (currencyConfigs && currencyConfigs.length > 0) {
-    await db.CurrencyRateConfig.destroy({
+    await db.RateCurrencyConfig.destroy({
       where: { rateId: id },
       transaction,
     });
-
-    await existingRate.setCurrencies([], { transaction });
-
-    const currencyIds = currencyConfigs.map((c) => c.id);
-    await existingRate.addCurrencies(currencyIds, { transaction });
 
     for (const item of currencyConfigs) {
       const {
@@ -72,9 +67,10 @@ export const updateRate = withTransaction(async (req, res) => {
         sellShouldRound,
         sellRoundingDepth,
         sellRoundingType,
+        order,
       } = item;
 
-      await db.CurrencyRateConfig.create(
+      await db.RateCurrencyConfig.create(
         {
           rateId: existingRate.id,
           currencyId,
@@ -88,6 +84,7 @@ export const updateRate = withTransaction(async (req, res) => {
           sellShouldRound: sellShouldRound ?? false,
           sellRoundingDepth: sellRoundingDepth ?? null,
           sellRoundingType: sellRoundingType ?? null,
+          order: order ?? null,
         },
         { transaction }
       );

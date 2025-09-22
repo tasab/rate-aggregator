@@ -18,11 +18,11 @@ mainRouter.post('/register', register);
 mainRouter.post('/login', login);
 mainRouter.get('/verify-token', verifyToken);
 mainRouter.get('/time', getServerTime);
-mainRouter.use('/currency', authMiddleware, currencyRouter);
-mainRouter.use('/rate-source', authMiddleware, rateSourceRouter);
-mainRouter.use('/rate-source-order', authMiddleware, rateSourceOrderRouter);
-mainRouter.use('/rate', authMiddleware, rateRouter);
-mainRouter.use('/worker', authMiddleware, workerRouter);
-mainRouter.use('/telegram', authMiddleware, telegramRouter);
+mainRouter.use('/', authMiddleware, currencyRouter);
+mainRouter.use('/', authMiddleware, rateSourceRouter);
+mainRouter.use('/', authMiddleware, rateSourceOrderRouter);
+mainRouter.use('/', authMiddleware, rateRouter);
+mainRouter.use('/', authMiddleware, workerRouter);
+mainRouter.use('/', authMiddleware, telegramRouter);
 
 export default mainRouter;

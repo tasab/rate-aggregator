@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('currency_rate_configs', {
+    await queryInterface.createTable('rate_currency_configs', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -86,9 +86,13 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
+      order: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
     });
   },
-  async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('currency_rate_configs');
+  async down(queryInterface) {
+    await queryInterface.dropTable('rate_currency_configs');
   },
 };

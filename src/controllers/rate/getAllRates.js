@@ -13,13 +13,13 @@ export const getAllRates = async (req, res) => {
       where: { userId },
       include: [
         {
-          model: db.CurrencyRateConfig,
+          model: db.RateCurrencyConfig,
           as: 'currencyConfigs',
           include: [
             {
               model: db.Currency,
-              attributes: ['id', 'code'],
               as: 'currency',
+              attributes: ['id', 'code'],
             },
           ],
         },
@@ -29,7 +29,6 @@ export const getAllRates = async (req, res) => {
           as: 'rateSource',
         },
       ],
-      order: [['updatedAt', 'DESC']],
     });
 
     res.status(200).json(rates);

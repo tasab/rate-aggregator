@@ -72,13 +72,8 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'rateSourceId',
       as: 'rateSource',
     });
-    Rate.belongsToMany(models.Currency, {
-      through: 'rate_currency',
-      foreignKey: 'rateId',
-      as: 'currencies',
-      onDelete: 'CASCADE',
-    });
-    Rate.hasMany(models.CurrencyRateConfig, {
+
+    Rate.hasMany(models.RateCurrencyConfig, {
       foreignKey: 'rateId',
       as: 'currencyConfigs',
       onDelete: 'CASCADE',

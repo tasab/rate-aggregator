@@ -5,7 +5,7 @@ import UserModel from './userModel.js';
 import RateModel from './rateModel.js';
 import CurrencyModel from './currencyModel.js';
 import RateSourceModel from './rateSourceModel.js';
-import CurrencyRateConfigModel from './currencyRateConfigModel.js';
+import RateCurrencyConfigModel from './rateCurrencyConfigModel.js';
 import RateSourceOrderModer from './rateSourceOrderModel.js';
 import RateSourceDataModel from './rateSourceDataModel.js';
 
@@ -22,7 +22,7 @@ db.User = UserModel(sequelize, DataTypes);
 db.Currency = CurrencyModel(sequelize, DataTypes);
 db.Rate = RateModel(sequelize, DataTypes);
 db.RateSource = RateSourceModel(sequelize, DataTypes);
-db.CurrencyRateConfig = CurrencyRateConfigModel(sequelize, DataTypes);
+db.RateCurrencyConfig = RateCurrencyConfigModel(sequelize, DataTypes);
 db.RateSourceOrder = RateSourceOrderModer(sequelize, DataTypes);
 db.RateSourceData = RateSourceDataModel(sequelize, DataTypes);
 

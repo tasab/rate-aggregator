@@ -44,25 +44,23 @@ const sendSingleRateMessage = async (rate) => {
 
   const rateMessages = [];
 
-  for (const currency of rate.currencies) {
+  for (const currencyConfig of rate.currencyConfigs) {
+    const currency = currencyConfig.currency;
+
     const rateData = enrichedRateSourceData.find((data) => {
       return (
         data?.currency_code?.toLowerCase() === currency?.code?.toLowerCase()
       );
     });
 
-    const rateConfig = rate.currencyConfigs.find(
-      (config) => config.currency.code === currency.code
-    );
-
-    if (rateData && rateConfig) {
+    if (rateData && currencyConfig) {
       const calculatedRate = parseRate(
         {
           bid: rateData.bid_rate,
           sell: rateData.sell_rate,
           updated: rateData.fetched_at,
         },
-        rateConfig
+        currencyConfig
       );
 
       const emojiFlag = getCurrencyEmoji(currency?.code?.toLowerCase());

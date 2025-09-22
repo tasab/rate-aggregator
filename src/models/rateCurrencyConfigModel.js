@@ -5,8 +5,8 @@ import {
 } from '../constants/roundingType.js';
 
 export default (sequelize, DataTypes) => {
-  const CurrencyRateConfig = sequelize.define(
-    'CurrencyRateConfig',
+  const RateCurrencyConfig = sequelize.define(
+    'RateCurrencyConfig',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -64,21 +64,25 @@ export default (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: ROUND_DEFAULT,
       },
+      order: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
     },
     {
-      tableName: 'currency_rate_configs',
+      tableName: 'rate_currency_configs',
       timestamps: true,
       underscored: true,
     }
   );
 
-  CurrencyRateConfig.associate = (models) => {
-    CurrencyRateConfig.belongsTo(models.Rate, { foreignKey: 'rateId' });
-    CurrencyRateConfig.belongsTo(models.Currency, {
+  RateCurrencyConfig.associate = (models) => {
+    RateCurrencyConfig.belongsTo(models.Rate, { foreignKey: 'rateId' });
+    RateCurrencyConfig.belongsTo(models.Currency, {
       foreignKey: 'currencyId',
       as: 'currency',
     });
   };
 
-  return CurrencyRateConfig;
+  return RateCurrencyConfig;
 };

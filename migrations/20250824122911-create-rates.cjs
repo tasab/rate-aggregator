@@ -65,6 +65,14 @@ module.exports = {
         defaultValue: false,
         allowNull: false,
       },
+      start_working_time: {
+        type: Sequelize.TIME,
+        allowNull: true,
+      },
+      end_working_time: {
+        type: Sequelize.TIME,
+        allowNull: true,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -75,7 +83,7 @@ module.exports = {
       },
     });
   },
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.dropTable('rates');
   },
 };

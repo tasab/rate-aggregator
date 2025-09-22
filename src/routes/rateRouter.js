@@ -7,11 +7,11 @@ import { getCalculatedRate } from '../controllers/rate/getCalculatedRate.js';
 import { updateRate } from '../controllers/rate/updateRate.js';
 const router = Router();
 
-router.post('/', createRate);
-router.put('/update', updateRate);
-router.put('/add-currency', addCurrencyToRate);
-router.get('/', getAllRates);
-router.get('/calculated/:rateId', getCalculatedRate);
-router.delete('/:id', deleteRate);
+router.post('/rate/', createRate);
+router.put('/rate/update', updateRate);
+router.put('/rate/add-currency', addCurrencyToRate);
+router.get('/rate/', getAllRates);
+router.get('/rate/calculated/:rateId', getCalculatedRate);
+router.delete('/rate/:id', deleteRate);
 
 export default router;

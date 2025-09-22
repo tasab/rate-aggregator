@@ -2,6 +2,7 @@ import { withTransaction } from '../../middleware/withTransaction.js';
 import db from '../../models/index.js';
 
 export const createRate = withTransaction(async (req, res) => {
+  const transaction = req.transaction;
   const {
     name,
     rateSourceId,
@@ -31,12 +32,9 @@ export const createRate = withTransaction(async (req, res) => {
       startWorkingTime,
       endWorkingTime,
     },
-    { transaction: req.transaction }
+    { transaction }
   );
 
-  const currencyIds = currencyConfigs.map((c) => c.id);
-
-  await rate.addCurrencies(currencyIds, { transaction: req.transaction });
   for (const item of currencyConfigs) {
     const {
       id,
@@ -50,8 +48,9 @@ export const createRate = withTransaction(async (req, res) => {
       sellShouldRound,
       sellRoundingDepth,
       sellRoundingType,
+      order,
     } = item;
-    await db.CurrencyRateConfig.create(
+    await db.RateCurrencyConfig.create(
       {
         rateId: rate.id,
         currencyId: id,
@@ -65,8 +64,9 @@ export const createRate = withTransaction(async (req, res) => {
         sellShouldRound: sellShouldRound ?? false,
         sellRoundingDepth: sellRoundingDepth ?? null,
         sellRoundingType: sellRoundingType ?? null,
+        order: order ?? null,
       },
-      { transaction: req.transaction }
+      { transaction }
     );
   }
 

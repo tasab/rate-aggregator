@@ -25,22 +25,16 @@ export default (sequelize, DataTypes) => {
   );
 
   Currency.associate = (models) => {
-    Currency.belongsToMany(models.Rate, {
-      through: 'rate_currency',
-      foreignKey: 'currencyId',
-      as: 'rates',
-    });
-
-    Currency.hasMany(models.CurrencyRateConfig, {
+    Currency.hasMany(models.RateCurrencyConfig, {
       foreignKey: 'currencyId',
       as: 'currencyConfigs',
     });
 
     Currency.belongsToMany(models.RateSource, {
-      through: 'rate_source_currency', // Must match the join table name in RateSource
-      foreignKey: 'currencyId', // Foreign key for Currency in the join table
-      otherKey: 'rateSourceId', // Foreign key for RateSource in the join table
-      as: 'rateSources', // Alias for the association
+      through: 'rate_source_currency',
+      foreignKey: 'currencyId',
+      otherKey: 'rateSourceId',
+      as: 'rateSources',
     });
   };
 

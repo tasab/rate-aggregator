@@ -50,13 +50,7 @@ export const findAllRatesToTelegramMessage = () => {
     },
     include: [
       {
-        model: db.Currency,
-        through: { attributes: [] },
-        attributes: ['id', 'code', 'fullName'],
-        as: 'currencies',
-      },
-      {
-        model: db.CurrencyRateConfig,
+        model: db.RateCurrencyConfig,
         as: 'currencyConfigs',
         include: [
           {
@@ -71,6 +65,9 @@ export const findAllRatesToTelegramMessage = () => {
         attributes: ['id', 'name', 'type', 'location', 'link'],
         as: 'rateSource',
       },
+    ],
+    order: [
+      [{ model: db.RateCurrencyConfig, as: 'currencyConfigs' }, 'order', 'ASC'],
     ],
   });
 };

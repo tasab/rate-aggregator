@@ -17,32 +17,29 @@ export const getCalculatedRate = async (req, res) => {
       return res.status(404).json({ message: 'Rate not found' });
     }
 
-    const rateCurrencies = rate?.currencies;
     const currencyConfigs = rate?.currencyConfigs;
 
     const enrichedRateSourceData = await getLatestRateSourceData(
       rate.rateSource?.id
     );
 
-    const calculatedRates = rateCurrencies?.map((currency) => {
+    const calculatedRates = currencyConfigs?.map((currencyConfig) => {
+      const currency = currencyConfig?.currency;
+
       const rateData = enrichedRateSourceData?.find((data) => {
         return (
           data?.currency_code?.toLowerCase() === currency?.code?.toLowerCase()
         );
       });
 
-      const rateConfig = currencyConfigs?.find(
-        (config) => config?.currency?.code === currency?.code
-      );
-
-      if (rateData && rateConfig) {
+      if (rateData && currencyConfig) {
         const calculatedRate = parseRate(
           {
             bid: rateData.bid_rate,
             sell: rateData.sell_rate,
             updated: rateData.fetched_at,
           },
-          rateConfig
+          currencyConfig
         );
         return { currency: currency.code, calculatedRate };
       }

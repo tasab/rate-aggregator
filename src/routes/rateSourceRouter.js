@@ -4,8 +4,8 @@ import { updateRateSource } from '../controllers/rateSource/updateRateSource.js'
 import { getRateSourceById } from '../controllers/rateSource/getRateSourceById.js';
 const router = Router();
 
-router.get('/all', getRateSources);
-router.get('/:id', getRateSourceById);
-router.put('/update', updateRateSource);
+router.get('/rate-source/all', getRateSources);
+router.get('/rate-source/:id', getRateSourceById);
+router.put('/rate-source/update', updateRateSource);
 
 export default router;

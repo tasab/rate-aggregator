@@ -3,7 +3,7 @@
 module.exports = {
   async up(queryInterface) {
     await queryInterface.bulkInsert(
-      'currency_rate_configs',
+      'rate_currency_configs',
       [
         {
           id: 1,
@@ -21,6 +21,7 @@ module.exports = {
           sell_rounding_type: 'ROUND_DOWN',
           created_at: new Date(),
           updated_at: new Date(),
+          order: 1,
         },
         {
           id: 2,
@@ -38,6 +39,7 @@ module.exports = {
           sell_rounding_type: 'ROUND_DOWN',
           created_at: new Date(),
           updated_at: new Date(),
+          order: 2,
         },
         {
           id: 3,
@@ -55,6 +57,7 @@ module.exports = {
           sell_rounding_type: 'ROUND_UP',
           created_at: new Date(),
           updated_at: new Date(),
+          order: 3,
         },
         {
           id: 4,
@@ -72,6 +75,7 @@ module.exports = {
           sell_rounding_type: 'ROUND_UP',
           created_at: new Date(),
           updated_at: new Date(),
+          order: 4,
         },
         {
           id: 5,
@@ -89,21 +93,22 @@ module.exports = {
           sell_rounding_type: 'ROUND_DOWN',
           created_at: new Date(),
           updated_at: new Date(),
+          order: 5,
         },
       ],
       {}
     );
 
     await queryInterface.sequelize.query(
-      "SELECT setval(pg_get_serial_sequence('currency_rate_configs', 'id'), COALESCE((SELECT MAX(id) FROM currency_rate_configs), 1), true);"
+      "SELECT setval(pg_get_serial_sequence('rate_currency_configs', 'id'), COALESCE((SELECT MAX(id) FROM rate_currency_configs), 1), true);"
     );
   },
 
   async down(queryInterface) {
-    await queryInterface.bulkDelete('currency_rate_configs', null, {});
+    await queryInterface.bulkDelete('rate_currency_configs', null, {});
 
     await queryInterface.sequelize.query(
-      "SELECT setval(pg_get_serial_sequence('currency_rate_configs', 'id'), 1, false);"
+      "SELECT setval(pg_get_serial_sequence('rate_currency_configs', 'id'), 1, false);"
     );
   },
 };
