@@ -20,4 +20,5 @@ export const getRateWithCurrencyConfigs = (rateId) =>
         as: 'rateSource',
       },
     ],
+    order: [['currencyConfigs', 'order', 'ASC']],
   });

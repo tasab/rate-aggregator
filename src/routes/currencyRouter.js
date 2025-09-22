@@ -6,6 +6,6 @@ const router = Router();
 
 router.get('/currency/get-all-currencies', getAllCurrencies);
 router.post('/currency/add-currency', addCurrencies);
-router.put('/update-currency', updateCurrency);
+router.put('/currency/update-currency', updateCurrency);
 
 export default router;
