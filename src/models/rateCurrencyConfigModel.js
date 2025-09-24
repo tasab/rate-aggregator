@@ -13,8 +13,6 @@ export default (sequelize, DataTypes) => {
         autoIncrement: true,
         primaryKey: true,
       },
-      effectiveFrom: { type: DataTypes.DATE, allowNull: false },
-      effectiveTo: { type: DataTypes.DATE, allowNull: true },
       rateId: {
         type: DataTypes.INTEGER,
         allowNull: false,

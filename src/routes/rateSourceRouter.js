@@ -6,6 +6,6 @@ const router = Router();
 
 router.get('/rate-source/all', getRateSources);
 router.get('/rate-source/:id', getRateSourceById);
-router.put('/rate-source/update', updateRateSource);
+router.put('/rate-source/:id', updateRateSource);
 
 export default router;

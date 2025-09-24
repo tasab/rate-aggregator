@@ -28,6 +28,10 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      lastProcessedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
       rateSourceOrderId: {
         type: DataTypes.INTEGER,
         allowNull: true,

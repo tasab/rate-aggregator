@@ -8,38 +8,56 @@ export const createRate = withTransaction(async (req, res) => {
     rateSourceId,
     currencyConfigs,
     isPrivateRate,
-    telegramChatId,
-    telegramBotToken,
-    telegramNotificationsEnabled,
-    telegramMessageHeader,
-    telegramMessageFooter,
     startWorkingTime,
     endWorkingTime,
+    telegram,
   } = req.body;
+
   const userId = req?.user?.id;
 
+  // Create the rate first
   const rate = await db.Rate.create(
     {
       name,
       userId,
       rateSourceId,
       isPrivateRate,
-      telegramChatId,
-      telegramBotToken,
-      telegramMessageHeader,
-      telegramMessageFooter,
-      telegramNotificationsEnabled,
       startWorkingTime,
       endWorkingTime,
     },
     { transaction }
   );
 
+  // Create telegram config if telegram data is provided
+  if (telegram) {
+    const {
+      chatId,
+      botToken,
+      notificationsEnabled,
+      messageHeader,
+      messageFooter,
+    } = telegram;
+
+    if (chatId && botToken) {
+      await db.TelegramConfig.create(
+        {
+          rateId: rate.id,
+          botToken,
+          chatId,
+          messageHeader: messageHeader || null,
+          messageFooter: messageFooter || null,
+          notificationsEnabled: notificationsEnabled ?? false,
+          isConnected: false,
+        },
+        { transaction }
+      );
+    }
+  }
+
+  // Create currency configs
   for (const item of currencyConfigs) {
     const {
       id,
-      effectiveFrom,
-      effectiveTo,
       bidMargin,
       bidShouldRound,
       bidRoundingDepth,
@@ -54,8 +72,6 @@ export const createRate = withTransaction(async (req, res) => {
       {
         rateId: rate.id,
         currencyId: id,
-        effectiveFrom: effectiveFrom || new Date().toDateString(),
-        effectiveTo: effectiveTo || null,
         bidMargin: bidMargin,
         bidShouldRound: bidShouldRound ?? false,
         bidRoundingDepth: bidRoundingDepth ?? null,
@@ -64,6 +80,7 @@ export const createRate = withTransaction(async (req, res) => {
         sellShouldRound: sellShouldRound ?? false,
         sellRoundingDepth: sellRoundingDepth ?? null,
         sellRoundingType: sellRoundingType ?? null,
+        lastUpdatedAt: new Date(),
         order: order ?? null,
       },
       { transaction }

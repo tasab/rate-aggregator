@@ -1,25 +1,20 @@
 import db from '../models/index.js';
-import sequelize, { Op } from 'sequelize';
 
 export const getLatestRateSourceData = async (rateSourceId) => {
-  const latestRateSourceData = await db.RateSourceData.findAll({
-    where: { rate_source_id: rateSourceId },
-    attributes: [
-      'currency_code',
-      [sequelize.fn('MAX', sequelize.col('fetched_at')), 'latest_fetched_at'],
-    ],
-    group: ['currency_code'],
-    raw: true,
+  const rateSource = await db.RateSource.findByPk(rateSourceId, {
+    attributes: ['lastProcessedAt'],
   });
+
+  if (!rateSource || !rateSource.lastProcessedAt) {
+    return [];
+  }
 
   return await db.RateSourceData.findAll({
     where: {
-      [Op.or]: latestRateSourceData.map((item) => ({
-        currency_code: item.currency_code,
-        fetched_at: item.latest_fetched_at,
-      })),
+      rate_source_id: rateSourceId,
+      fetched_at: rateSource.lastProcessedAt,
     },
-    attributes: ['currency_code', 'bid_rate', 'sell_rate', 'fetched_at'], // Use correct column names
+    attributes: ['currency_code', 'bid_rate', 'sell_rate', 'fetched_at'],
     raw: true,
   });
 };

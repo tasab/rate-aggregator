@@ -7,8 +7,6 @@ module.exports = {
       [
         {
           id: 1,
-          effective_from: new Date('2024-01-01'),
-          effective_to: new Date('2024-12-31'),
           rate_id: 1,
           currency_id: 1,
           bid_margin: 0.02,
@@ -25,8 +23,6 @@ module.exports = {
         },
         {
           id: 2,
-          effective_from: new Date('2024-01-01'),
-          effective_to: new Date('2024-12-31'),
           rate_id: 2,
           currency_id: 2,
           bid_margin: 0.025,
@@ -43,8 +39,6 @@ module.exports = {
         },
         {
           id: 3,
-          effective_from: new Date('2024-01-01'),
-          effective_to: new Date('2024-12-31'),
           rate_id: 3,
           currency_id: 3,
           bid_margin: 0.03,
@@ -61,8 +55,6 @@ module.exports = {
         },
         {
           id: 4,
-          effective_from: new Date('2024-01-01'),
-          effective_to: new Date('2024-12-31'),
           rate_id: 4,
           currency_id: 1,
           bid_margin: 0.015,
@@ -79,8 +71,6 @@ module.exports = {
         },
         {
           id: 5,
-          effective_from: new Date('2024-01-01'),
-          effective_to: new Date('2024-12-31'),
           rate_id: 4,
           currency_id: 2,
           bid_margin: 0.02,

@@ -10,14 +10,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      effective_from: {
-        type: Sequelize.DATE,
-        allowNull: false,
-      },
-      effective_to: {
-        type: Sequelize.DATE,
-        allowNull: true,
-      },
       rate_id: {
         type: Sequelize.INTEGER,
         allowNull: false,

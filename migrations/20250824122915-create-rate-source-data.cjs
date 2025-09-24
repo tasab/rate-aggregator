@@ -40,15 +40,32 @@ module.exports = {
         allowNull: true,
       },
       created_at: {
-        allowNull: true,
+        allowNull: false,
         type: Sequelize.DATE,
       },
       updated_at: {
-        allowNull: true,
+        allowNull: false,
         type: Sequelize.DATE,
       },
     });
+
+    // Add performance indexes
+    await queryInterface.addIndex('rate_source_data', {
+      fields: ['rate_source_id', 'currency_code'],
+      name: 'rate_source_data_source_currency_idx',
+    });
+
+    await queryInterface.addIndex('rate_source_data', {
+      fields: ['fetched_at'],
+      name: 'rate_source_data_fetched_at_idx',
+    });
+
+    await queryInterface.addIndex('rate_source_data', {
+      fields: ['currency_code'],
+      name: 'rate_source_data_currency_code_idx',
+    });
   },
+
   async down(queryInterface) {
     await queryInterface.dropTable('rate_source_data');
   },

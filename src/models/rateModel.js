@@ -19,32 +19,6 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      telegramBotToken: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      telegramChatId: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      telegramMessageHeader: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      telegramMessageFooter: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      telegramSuccessConnection: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-        allowNull: false,
-      },
-      telegramNotificationsEnabled: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-        allowNull: false,
-      },
       isPrivateRate: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
@@ -56,6 +30,10 @@ export default (sequelize, DataTypes) => {
       },
       endWorkingTime: {
         type: DataTypes.TIME,
+        allowNull: true,
+      },
+      lastUpdatedAt: {
+        type: DataTypes.DATE,
         allowNull: true,
       },
     },
@@ -72,10 +50,15 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'rateSourceId',
       as: 'rateSource',
     });
-
     Rate.hasMany(models.RateCurrencyConfig, {
       foreignKey: 'rateId',
       as: 'currencyConfigs',
+      onDelete: 'CASCADE',
+    });
+
+    Rate.hasOne(models.TelegramConfig, {
+      foreignKey: 'rateId',
+      as: 'telegramConfig',
       onDelete: 'CASCADE',
     });
   };

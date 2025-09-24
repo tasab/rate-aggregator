@@ -8,7 +8,7 @@ export default {
     host: config.get('database.host'),
     port: config.get('database.port'),
     dialect: 'postgres',
-    logging: console.log,
+    logging: false,
   },
   production: {
     username: config.get('database.username'),

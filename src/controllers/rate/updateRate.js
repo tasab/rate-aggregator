@@ -8,11 +8,7 @@ export const updateRate = withTransaction(async (req, res) => {
     rateSourceId,
     currencyConfigs,
     isPrivateRate,
-    telegramChatId,
-    telegramBotToken,
-    telegramMessageFooter,
-    telegramMessageHeader,
-    telegramNotificationsEnabled,
+    telegram,
     startWorkingTime,
     endWorkingTime,
   } = req.body;
@@ -37,16 +33,54 @@ export const updateRate = withTransaction(async (req, res) => {
       name,
       rateSourceId,
       isPrivateRate,
-      telegramChatId,
-      telegramBotToken,
-      telegramMessageFooter,
-      telegramMessageHeader,
-      telegramNotificationsEnabled,
       startWorkingTime,
       endWorkingTime,
     },
     { transaction }
   );
+
+  if (telegram) {
+    const {
+      chatId,
+      botToken,
+      notificationsEnabled,
+      messageHeader,
+      messageFooter,
+    } = telegram;
+
+    const existingTelegramConfig = await db.TelegramConfig.findOne({
+      where: { rateId: id },
+      transaction,
+    });
+
+    if (existingTelegramConfig) {
+      // Update existing telegram config
+      await existingTelegramConfig.update(
+        {
+          botToken,
+          chatId,
+          messageHeader: messageHeader || null,
+          messageFooter: messageFooter || null,
+          notificationsEnabled: notificationsEnabled ?? false,
+        },
+        { transaction }
+      );
+    } else if (chatId && botToken) {
+      await db.TelegramConfig.create(
+        {
+          rateId: id,
+          botToken,
+          chatId,
+          messageHeader: messageHeader || null,
+          messageFooter: messageFooter || null,
+          notificationsEnabled: notificationsEnabled ?? false,
+          lastUpdatedAt: new Date(),
+          isConnected: false,
+        },
+        { transaction }
+      );
+    }
+  }
 
   if (currencyConfigs && currencyConfigs.length > 0) {
     await db.RateCurrencyConfig.destroy({
@@ -57,8 +91,6 @@ export const updateRate = withTransaction(async (req, res) => {
     for (const item of currencyConfigs) {
       const {
         id: currencyId,
-        effectiveFrom,
-        effectiveTo,
         bidMargin,
         bidShouldRound,
         bidRoundingDepth,
@@ -74,8 +106,6 @@ export const updateRate = withTransaction(async (req, res) => {
         {
           rateId: existingRate.id,
           currencyId,
-          effectiveFrom: effectiveFrom || new Date().toDateString(),
-          effectiveTo: effectiveTo || null,
           bidMargin: bidMargin,
           bidShouldRound: bidShouldRound ?? false,
           bidRoundingDepth: bidRoundingDepth ?? null,

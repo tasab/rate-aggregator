@@ -3,10 +3,17 @@ import { Op } from 'sequelize';
 import { withTransaction } from '../../middleware/withTransaction.js';
 
 export const updateRateSource = withTransaction(async (req, res) => {
-  const { rateSourceId } = req.body;
+  const rateSourceId = req.params?.id;
 
-  const { name, type, location, link, rateSourceOrderId, currencyIds } =
-    req.body;
+  const {
+    name,
+    type,
+    location,
+    link,
+    rateSourceOrderId,
+    currencyIds,
+    lastProcessedAt,
+  } = req.body;
 
   const { transaction } = req;
 
@@ -22,6 +29,8 @@ export const updateRateSource = withTransaction(async (req, res) => {
   if (link !== undefined) rateSource.link = link;
   if (rateSourceOrderId !== undefined)
     rateSource.rateSourceOrderId = rateSourceOrderId;
+  if (lastProcessedAt !== undefined)
+    rateSource.lastProcessedAt = lastProcessedAt;
 
   await rateSource.save({ transaction });
 

@@ -44,6 +44,11 @@ export default (sequelize, DataTypes) => {
       foreignKey: 'rateSourceId',
       as: 'rateSource',
     });
+
+    RateSourceData.hasMany(models.CalculatedRate, {
+      foreignKey: 'sourceRateDataId',
+      as: 'calculatedRates',
+    });
   };
 
   return RateSourceData;
