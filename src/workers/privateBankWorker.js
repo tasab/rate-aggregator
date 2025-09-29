@@ -34,7 +34,7 @@ const privateBankWorkerCore = async (page, rateSource) => {
         code: currencyName?.toLowerCase(),
         bid: bid,
         sell: sell,
-        updated: new Date().toString(),
+        updated: new Date().toISOString(),
       });
     });
 

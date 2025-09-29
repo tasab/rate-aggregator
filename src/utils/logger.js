@@ -18,8 +18,8 @@ const getLogType = (type) => {
 export const logger = (error, msg, type = '') => {
   const typeIcon = getLogType(type);
   if (error) {
-    console.log(`${typeIcon} ${msg}`, error);
+    console.log(`${msg}`, error, typeIcon);
   } else {
-    console.log(`${typeIcon} ${msg}`);
+    console.log(`${msg} ${typeIcon} `);
   }
 };

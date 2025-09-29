@@ -42,7 +42,11 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
       },
-      last_processed_at: {
+      new_updated_at: {
+        allowNull: true,
+        type: Sequelize.DATE,
+      },
+      prev_updated_at: {
         allowNull: true,
         type: Sequelize.DATE,
       },

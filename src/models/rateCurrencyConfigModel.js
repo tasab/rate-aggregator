@@ -41,7 +41,6 @@ export default (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: ROUND_DEFAULT,
       },
-
       sellMargin: {
         type: DataTypes.DECIMAL(10, 4),
         allowNull: false,

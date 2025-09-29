@@ -1,5 +1,9 @@
-import db from '../../models/index.js';
 import { LOG_ERROR, logger } from '../../utils/logger.js';
+import { findAllRates } from '../../query/rateQueries.js';
+import {
+  CURRENCY_CONFIGS_INCLUDE,
+  RATE_SOURCE_INCLUDE,
+} from '../../query/includes.js';
 
 export const getAllRates = async (req, res) => {
   try {
@@ -8,28 +12,10 @@ export const getAllRates = async (req, res) => {
     if (!userId) {
       return res.status(400).json({ message: 'User ID is required' });
     }
-
-    const rates = await db.Rate.findAll({
-      where: { userId },
-      include: [
-        {
-          model: db.RateCurrencyConfig,
-          as: 'currencyConfigs',
-          include: [
-            {
-              model: db.Currency,
-              as: 'currency',
-              attributes: ['id', 'code'],
-            },
-          ],
-        },
-        {
-          model: db.RateSource,
-          attributes: ['id', 'name', 'type', 'location', 'link'],
-          as: 'rateSource',
-        },
-      ],
-    });
+    const rates = await findAllRates({ userId }, [
+      CURRENCY_CONFIGS_INCLUDE,
+      RATE_SOURCE_INCLUDE,
+    ]);
 
     res.status(200).json(rates);
   } catch (error) {

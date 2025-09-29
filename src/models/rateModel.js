@@ -32,7 +32,11 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.TIME,
         allowNull: true,
       },
-      lastUpdatedAt: {
+      newUpdatedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      prevUpdatedAt: {
         type: DataTypes.DATE,
         allowNull: true,
       },

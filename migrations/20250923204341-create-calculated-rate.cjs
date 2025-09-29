@@ -19,15 +19,15 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      currency_code: {
+      code: {
         type: Sequelize.STRING(10),
         allowNull: false,
       },
-      bid_rate: {
+      bid: {
         type: Sequelize.DECIMAL(15, 6),
         allowNull: true,
       },
-      sell_rate: {
+      sell: {
         type: Sequelize.DECIMAL(15, 6),
         allowNull: true,
       },
@@ -39,7 +39,7 @@ module.exports = {
           key: 'id',
         },
         onUpdate: 'CASCADE',
-        onDelete: 'RESTRICT', // Don't allow deleting source data if it's referenced
+        onDelete: 'RESTRICT',
       },
       calculated_at: {
         type: Sequelize.DATE,
@@ -53,13 +53,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
-    });
-
-    // Add unique constraint
-    await queryInterface.addIndex('calculated_rates', {
-      unique: true,
-      fields: ['rate_id', 'currency_code'],
-      name: 'calculated_rates_rate_currency_unique',
     });
 
     // Add performance indexes

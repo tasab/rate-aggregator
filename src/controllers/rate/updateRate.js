@@ -1,5 +1,6 @@
 import { withTransaction } from '../../middleware/withTransaction.js';
 import db from '../../models/index.js';
+import { findRateById } from '../../query/rateQueries.js';
 
 export const updateRate = withTransaction(async (req, res) => {
   const {
@@ -13,31 +14,16 @@ export const updateRate = withTransaction(async (req, res) => {
     endWorkingTime,
   } = req.body;
   const transaction = req.transaction;
-  const userId = req?.user?.id;
 
   if (!id) {
     return res.status(400).json({ error: 'Rate ID is required' });
   }
-
-  const existingRate = await db.Rate.findOne({
-    where: { id, userId },
-    transaction,
-  });
+  const existingRate = await findRateById(id, [], transaction);
+  const newUpdatedAt = new Date();
 
   if (!existingRate) {
     return res.status(404).json({ error: 'Rate not found' });
   }
-
-  await existingRate.update(
-    {
-      name,
-      rateSourceId,
-      isPrivateRate,
-      startWorkingTime,
-      endWorkingTime,
-    },
-    { transaction }
-  );
 
   if (telegram) {
     const {
@@ -74,7 +60,6 @@ export const updateRate = withTransaction(async (req, res) => {
           messageHeader: messageHeader || null,
           messageFooter: messageFooter || null,
           notificationsEnabled: notificationsEnabled ?? false,
-          lastUpdatedAt: new Date(),
           isConnected: false,
         },
         { transaction }
@@ -120,6 +105,19 @@ export const updateRate = withTransaction(async (req, res) => {
       );
     }
   }
+
+  await existingRate.update(
+    {
+      name,
+      rateSourceId,
+      isPrivateRate,
+      startWorkingTime,
+      endWorkingTime,
+      newUpdatedAt,
+      prevUpdatedAt: existingRate?.newUpdatedAt,
+    },
+    { transaction }
+  );
 
   res.status(200).json(existingRate);
 });

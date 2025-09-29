@@ -19,24 +19,20 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      currency_code: {
+      code: {
         type: Sequelize.STRING(10),
         allowNull: false,
       },
-      bid_rate: {
+      bid: {
         type: Sequelize.DECIMAL(15, 6),
         allowNull: true,
       },
-      sell_rate: {
+      sell: {
         type: Sequelize.DECIMAL(15, 6),
         allowNull: true,
       },
       fetched_at: {
         type: Sequelize.DATE,
-        allowNull: true,
-      },
-      raw_data: {
-        type: Sequelize.TEXT,
         allowNull: true,
       },
       created_at: {
@@ -51,7 +47,7 @@ module.exports = {
 
     // Add performance indexes
     await queryInterface.addIndex('rate_source_data', {
-      fields: ['rate_source_id', 'currency_code'],
+      fields: ['rate_source_id', 'code'],
       name: 'rate_source_data_source_currency_idx',
     });
 
@@ -61,8 +57,8 @@ module.exports = {
     });
 
     await queryInterface.addIndex('rate_source_data', {
-      fields: ['currency_code'],
-      name: 'rate_source_data_currency_code_idx',
+      fields: ['code'],
+      name: 'rate_source_data_code_idx',
     });
   },
 

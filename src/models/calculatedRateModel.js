@@ -11,15 +11,15 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      currencyCode: {
+      code: {
         type: DataTypes.STRING(10),
         allowNull: false,
       },
-      bidRate: {
+      bid: {
         type: DataTypes.DECIMAL(15, 6),
         allowNull: true,
       },
-      sellRate: {
+      sell: {
         type: DataTypes.DECIMAL(15, 6),
         allowNull: true,
       },
@@ -37,12 +37,6 @@ export default (sequelize, DataTypes) => {
       tableName: 'calculated_rates',
       timestamps: true,
       underscored: true,
-      indexes: [
-        {
-          unique: true,
-          fields: ['rate_id', 'currency_code'],
-        },
-      ],
     }
   );
 

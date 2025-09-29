@@ -11,24 +11,20 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      currencyCode: {
+      code: {
         type: DataTypes.STRING(10),
         allowNull: false,
       },
-      bidRate: {
+      bid: {
         type: DataTypes.DECIMAL(15, 6),
         allowNull: true,
       },
-      sellRate: {
+      sell: {
         type: DataTypes.DECIMAL(15, 6),
         allowNull: true,
       },
       fetchedAt: {
         type: DataTypes.DATE,
-        allowNull: true,
-      },
-      rawData: {
-        type: DataTypes.TEXT,
         allowNull: true,
       },
     },

@@ -1,54 +1,48 @@
-import { parseRate } from '../../utils/rateUtils.js';
-import { getLatestRateSourceData } from '../../query/getLatestRateSourceData.js';
 import { logger } from '../../utils/logger.js';
-import { getRateWithCurrencyConfigs } from '../../query/getRateWithCurrencyConfigs.js';
+import { findRateById } from '../../query/rateQueries.js';
+import { findAllCalculatedRates } from '../../query/calculatedRateQueries.js';
+import { getNumber } from '../../utils/rateUtils.js';
 
 export const getCalculatedRate = async (req, res) => {
   try {
     const rateId = req.params?.rateId;
+    const transaction = req.transaction;
 
     if (!rateId) {
       return res.status(400).json({ message: 'rateId is required' });
     }
 
-    const rate = await getRateWithCurrencyConfigs(rateId);
+    const rate = await findRateById(rateId, [], transaction);
+
+    const prevRatesInstances = await findAllCalculatedRates(
+      { calculatedAt: rate?.prevUpdatedAt },
+      [],
+      transaction
+    );
+
+    const newRatesInstances = await findAllCalculatedRates(
+      { calculatedAt: rate?.newUpdatedAt },
+      [],
+      transaction
+    );
+
+    const prevRates = prevRatesInstances.map((rate) => rate.toJSON());
+    const newRates = newRatesInstances.map((rate) => rate.toJSON());
+
+    if (!newRates.length) {
+      return res.status(404).json({ message: 'Rates not found' });
+    }
 
     if (!rate) {
       return res.status(404).json({ message: 'Rate not found' });
     }
 
-    const currencyConfigs = rate?.currencyConfigs;
-
-    const enrichedRateSourceData = await getLatestRateSourceData(
-      rate.rateSource?.id
-    );
-
-    const calculatedRates = currencyConfigs?.map((currencyConfig) => {
-      const currency = currencyConfig?.currency;
-
-      const rateData = enrichedRateSourceData?.find((data) => {
-        return (
-          data?.currency_code?.toLowerCase() === currency?.code?.toLowerCase()
-        );
-      });
-
-      if (rateData && currencyConfig) {
-        const calculatedRate = parseRate(
-          {
-            bid: rateData.bid_rate,
-            sell: rateData.sell_rate,
-            updated: rateData.fetched_at,
-          },
-          currencyConfig
-        );
-        return { currency: currency.code, calculatedRate };
-      }
-
-      return {
-        currency: currency.code,
-        error: 'Missing rate data or configuration',
-      };
-    });
+    const calculatedRates = newRates.map((item) => ({
+      ...item,
+      prev: prevRates.length
+        ? prevRates.find((prevItem) => prevItem.code === item.code)
+        : null,
+    }));
 
     return res.status(200).json({
       rate,

@@ -34,32 +34,6 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      telegram_bot_token: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      telegram_chat_id: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      telegram_message_header: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      telegram_message_footer: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      telegram_notifications_enabled: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false,
-        allowNull: false,
-      },
-      telegram_success_connection: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false,
-        allowNull: false,
-      },
       is_private_rate: {
         type: Sequelize.BOOLEAN,
         defaultValue: false,
@@ -73,11 +47,15 @@ module.exports = {
         type: Sequelize.TIME,
         allowNull: true,
       },
-      created_at: {
-        allowNull: false,
+      new_updated_at: {
+        allowNull: true,
         type: Sequelize.DATE,
       },
-      last_updated_at: {
+      prev_updated_at: {
+        allowNull: true,
+        type: Sequelize.DATE,
+      },
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },

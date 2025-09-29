@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { addCurrencyToRate } from '../controllers/rate/addCurrencyToRate.js';
 import { createRate } from '../controllers/rate/createRate.js';
 import { getAllRates } from '../controllers/rate/getAllRates.js';
 import { deleteRate } from '../controllers/rate/deleteRate.js';
@@ -9,7 +8,6 @@ const router = Router();
 
 router.post('/rate/', createRate);
 router.put('/rate/update', updateRate);
-router.put('/rate/add-currency', addCurrencyToRate);
 router.get('/rate/', getAllRates);
 router.get('/rate/calculated/:rateId', getCalculatedRate);
 router.delete('/rate/:id', deleteRate);

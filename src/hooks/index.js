@@ -1,5 +1,5 @@
-import { processRateSourceUpdate } from './processRateSourceUpdate.js';
-import { processRateUpdate } from './processRateUpdate.js';
+import { processRateSourceUpdateHook } from './processRateSourceUpdateHook.js';
+import { processRateUpdateHook } from './processRateUpdateHook.js';
 
 export const associateModels = (db) => {
   Object.keys(db).forEach((modelName) => {
@@ -10,6 +10,6 @@ export const associateModels = (db) => {
 };
 
 export const registerHooks = (db) => {
-  db.RateSource.addHook('afterUpdate', processRateSourceUpdate);
-  db.Rate.addHook('afterUpdate', processRateUpdate);
+  db.RateSource.addHook('afterUpdate', processRateSourceUpdateHook);
+  db.Rate.addHook('afterUpdate', processRateUpdateHook);
 };

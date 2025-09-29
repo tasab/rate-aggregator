@@ -60,7 +60,7 @@ module.exports = {
     await queryInterface.addIndex('telegram_configs', ['rate_id']);
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     await queryInterface.dropTable('telegram_configs');
   },
 };

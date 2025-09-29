@@ -1,100 +1,89 @@
-import { LOG_ERROR, LOG_SUCCESS, logger } from '../utils/logger.js';
-import TelegramBot from 'node-telegram-bot-api';
-import { parseRate } from '../utils/rateUtils.js';
+import { LOG_ERROR, LOG_INFO, LOG_SUCCESS, logger } from '../utils/logger.js';
 import RATE_EMOJI from '../constants/rateEmoji.js';
-import { findAllRatesToTelegramMessage } from '../query/findAllRatesToTelegramMessage.js';
-import { getLatestRateSourceData } from '../query/getLatestRateSourceData.js';
+import { getLowerCode, getString, getUpperCode } from '../utils/rateUtils.js';
+import TelegramBot from 'node-telegram-bot-api';
 
-const getCurrencyEmoji = (currencyCode) => {
-  return RATE_EMOJI?.[currencyCode?.toLowerCase()] || '💱';
+const getCurrencyEmoji = (code) => {
+  return RATE_EMOJI?.[code?.toLowerCase()] || '💱';
 };
 
-export const sendRateMessage = async () => {
+const getTrendIcon = (newPrice, prevPrice) => {
+  if (newPrice > prevPrice) {
+    return '🟩';
+  } else if (newPrice < prevPrice) {
+    return '🟥';
+  }
+  return '';
+};
+
+export const sendRateUpdateMessage = async (rateData) => {
+  const { rate, newRate, prevRate } = rateData;
+
   try {
-    const rates = await findAllRatesToTelegramMessage();
-
-    for (const rate of rates) {
-      try {
-        await sendSingleRateMessage(rate);
-      } catch (error) {
-        logger(
-          error,
-          `Error sending telegram message for rate ${rate.id}:`,
-          LOG_ERROR
-        );
-      }
+    if (!rate?.telegram?.botToken || !rate?.telegram?.chatId) {
+      logger(
+        null,
+        `Rate ${rate.id} doesn't have telegram configuration, skipping`,
+        LOG_INFO
+      );
+      return;
     }
-  } catch (error) {
-    logger(error, 'Fatal error in telegram rate notifications:', LOG_ERROR);
-  }
-};
 
-const sendSingleRateMessage = async (rate) => {
-  const bot = new TelegramBot(rate.telegramBotToken);
+    const bot = new TelegramBot(rate.telegramBotToken);
+    const rateMessages = [];
 
-  const enrichedRateSourceData = await getLatestRateSourceData(
-    rate?.rateSource?.id
-  );
+    for (const newRateItem of newRate) {
+      const prevRateItem = prevRate.find(
+        (prev) => getLowerCode(prev?.code) === getLowerCode(newRateItem?.code)
+      );
 
-  if (!enrichedRateSourceData || enrichedRateSourceData.length === 0) {
-    throw new Error(
-      `No rate data found for rate source ${rate.rateSource?.id}`
+      const newRateCode = getUpperCode(newRateItem?.code);
+
+      const emojiFlag = getCurrencyEmoji(newRateCode);
+      const newBid = getString(newRateItem?.bid) || 'N/A';
+      const newSell = getString(newRateItem?.sell) || 'N/A';
+
+      // const prevBuy = getString(prevRateItem?.bid) || 'N/A';
+      // const prevSell = getString(prevRateItem?.sell) || 'N/A';
+
+      const bidTrend = getTrendIcon(newRateItem?.bid, prevRateItem?.bid);
+      const sellTrend = getTrendIcon(newRateItem?.sell, prevRateItem?.sell);
+
+      let message = `${emojiFlag} ${newRateCode}: ${newBid} ${bidTrend} - ${newSell} ${sellTrend}`;
+      // message += `\n   Previous: ${prevBuy} - ${prevSell}`;
+
+      rateMessages.push(message);
+    }
+
+    if (rateMessages.length === 0) {
+      throw new Error(`No valid rate data found for rate ${rate.id}`);
+    }
+
+    let finalMessage = '';
+
+    if (rate?.telegram?.messageHeader) {
+      finalMessage += `${rate.telegram.messageHeader}\n`;
+    }
+
+    finalMessage += rateMessages.join('\n');
+
+    if (rate?.telegram?.messageFooter) {
+      finalMessage += `\n${rate?.telegram?.messageFooter}`;
+    }
+
+    await bot.sendMessage(rate.telegramChatId, finalMessage);
+
+    logger(
+      null,
+      `Rate update telegram message sent successfully for rate ${rate.id}`,
+      LOG_SUCCESS
     );
+  } catch (error) {
+    logger(
+      error,
+      `Error sending rate update telegram message for rate ${rate.id}:`,
+      LOG_ERROR
+    );
+    throw error;
   }
-
-  const rateMessages = [];
-
-  for (const currencyConfig of rate.currencyConfigs) {
-    const currency = currencyConfig.currency;
-
-    const rateData = enrichedRateSourceData.find((data) => {
-      return (
-        data?.currency_code?.toLowerCase() === currency?.code?.toLowerCase()
-      );
-    });
-
-    if (rateData && currencyConfig) {
-      const calculatedRate = parseRate(
-        {
-          bid: rateData.bid_rate,
-          sell: rateData.sell_rate,
-          updated: rateData.fetched_at,
-        },
-        currencyConfig
-      );
-
-      const emojiFlag = getCurrencyEmoji(currency?.code?.toLowerCase());
-      const currencyCode = currency.code.toUpperCase();
-      const buy =
-        parseFloat(calculatedRate.bid?.toFixed(2))?.toString() || 'N/A';
-      const sell =
-        parseFloat(calculatedRate.sell?.toFixed(2))?.toString() || 'N/A';
-
-      rateMessages.push(`${emojiFlag} ${currencyCode}: ${buy} - ${sell}`);
-    }
-  }
-
-  if (rateMessages.length === 0) {
-    throw new Error(`No valid rate data found for rate ${rate.id}`);
-  }
-
-  let message = '';
-
-  if (rate.telegramMessageHeader) {
-    message += `${rate.telegramMessageHeader}\n\n`;
-  }
-
-  message += rateMessages.join('\n');
-
-  if (rate.telegramMessageFooter) {
-    message += `\n\n${rate.telegramMessageFooter}`;
-  }
-
-  await bot.sendMessage(rate.telegramChatId, message);
-
-  logger(
-    null,
-    `Telegram message sent successfully for rate ${rate.id} to chat ${rate.telegramChatId}`,
-    LOG_SUCCESS
-  );
 };

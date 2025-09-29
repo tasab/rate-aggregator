@@ -12,10 +12,9 @@ export const createRate = withTransaction(async (req, res) => {
     endWorkingTime,
     telegram,
   } = req.body;
-
+  const processDate = new Date();
   const userId = req?.user?.id;
 
-  // Create the rate first
   const rate = await db.Rate.create(
     {
       name,
@@ -24,11 +23,12 @@ export const createRate = withTransaction(async (req, res) => {
       isPrivateRate,
       startWorkingTime,
       endWorkingTime,
+      prevUpdatedAt: processDate,
+      newUpdatedAt: processDate,
     },
     { transaction }
   );
 
-  // Create telegram config if telegram data is provided
   if (telegram) {
     const {
       chatId,
@@ -54,7 +54,6 @@ export const createRate = withTransaction(async (req, res) => {
     }
   }
 
-  // Create currency configs
   for (const item of currencyConfigs) {
     const {
       id,
@@ -80,7 +79,6 @@ export const createRate = withTransaction(async (req, res) => {
         sellShouldRound: sellShouldRound ?? false,
         sellRoundingDepth: sellRoundingDepth ?? null,
         sellRoundingType: sellRoundingType ?? null,
-        lastUpdatedAt: new Date(),
         order: order ?? null,
       },
       { transaction }

@@ -15,6 +15,8 @@ module.exports = {
           rate_source_order_id: null,
           created_at: new Date(),
           updated_at: new Date(),
+          new_updated_at: new Date(),
+          prev_updated_at: new Date(),
         },
         {
           id: 2,
@@ -26,6 +28,8 @@ module.exports = {
           rate_source_order_id: null,
           created_at: new Date(),
           updated_at: new Date(),
+          new_updated_at: new Date(),
+          prev_updated_at: new Date(),
         },
         {
           id: 3,
@@ -37,6 +41,8 @@ module.exports = {
           rate_source_order_id: null,
           created_at: new Date(),
           updated_at: new Date(),
+          new_updated_at: new Date(),
+          prev_updated_at: new Date(),
         },
         {
           id: 4,
@@ -48,6 +54,8 @@ module.exports = {
           rate_source_order_id: null,
           created_at: new Date(),
           updated_at: new Date(),
+          new_updated_at: new Date(),
+          prev_updated_at: new Date(),
         },
         {
           id: 5,
@@ -59,6 +67,8 @@ module.exports = {
           rate_source_order_id: null,
           created_at: new Date(),
           updated_at: new Date(),
+          new_updated_at: new Date(),
+          prev_updated_at: new Date(),
         },
       ],
       {}

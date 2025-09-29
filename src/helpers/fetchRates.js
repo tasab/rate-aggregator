@@ -1,13 +1,12 @@
 import db from '../models/index.js';
 import { getRateSourceController } from '../utils/getRateSourceController.js';
 import { LOG_ERROR, logger } from '../utils/logger.js';
+import { findAllRateSources } from '../query/rateSourceQueries.js';
 
 export const fetchRawRatesFromSources = async () => {
   try {
-    const rateSources = await db.RateSource.findAll({
-      where: {
-        link: { [db.Sequelize.Op.ne]: null },
-      },
+    const rateSources = await findAllRateSources({
+      link: { [db.Sequelize.Op.ne]: null },
     });
 
     for (const source of rateSources) {
@@ -38,13 +37,14 @@ const fetchFromSingleSource = async (rateSource) => {
       throw new Error('No valid rates array received from controller');
     }
 
-    const processedAt = new Date();
+    const processAt = new Date();
 
-    await saveRatesToDatabase(rateSource.id, rates, processedAt, transaction);
+    await saveRatesToDatabase(rateSource.id, rates, processAt, transaction);
 
     await rateSource.update(
       {
-        lastProcessedAt: processedAt,
+        newUpdatedAt: processAt,
+        prevUpdatedAt: rateSource.newUpdatedAt,
       },
       { transaction }
     );
@@ -68,11 +68,10 @@ const saveRatesToDatabase = async (
   for (const rateData of rates) {
     dataToInsert.push({
       rateSourceId,
-      currencyCode: rateData.code,
-      bidRate: rateData.bid,
-      sellRate: rateData.sell,
+      code: rateData.code,
+      bid: rateData.bid,
+      sell: rateData.sell,
       fetchedAt,
-      rawData: JSON.stringify(rateData),
     });
   }
 
