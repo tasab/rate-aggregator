@@ -1,5 +1,6 @@
 import { withTransaction } from '../../middleware/withTransaction.js';
 import db from '../../models/index.js';
+import { findUserRateById } from '../../query/userRateQueries.js';
 
 export const updateRate = withTransaction(async (req, res) => {
   const {
@@ -8,45 +9,63 @@ export const updateRate = withTransaction(async (req, res) => {
     rateSourceId,
     currencyConfigs,
     isPrivateRate,
-    telegramChatId,
-    telegramBotToken,
-    telegramMessageFooter,
-    telegramMessageHeader,
-    telegramNotificationsEnabled,
+    telegram,
     startWorkingTime,
     endWorkingTime,
   } = req.body;
   const transaction = req.transaction;
-  const userId = req?.user?.id;
 
   if (!id) {
     return res.status(400).json({ error: 'Rate ID is required' });
   }
-
-  const existingRate = await db.Rate.findOne({
-    where: { id, userId },
-    transaction,
-  });
+  const existingRate = await findUserRateById(id, [], transaction);
+  const newUpdatedAt = new Date();
 
   if (!existingRate) {
     return res.status(404).json({ error: 'Rate not found' });
   }
 
-  await existingRate.update(
-    {
-      name,
-      rateSourceId,
-      isPrivateRate,
-      telegramChatId,
-      telegramBotToken,
-      telegramMessageFooter,
-      telegramMessageHeader,
-      telegramNotificationsEnabled,
-      startWorkingTime,
-      endWorkingTime,
-    },
-    { transaction }
-  );
+  if (telegram) {
+    const {
+      chatId,
+      botToken,
+      notificationsEnabled,
+      messageHeader,
+      messageFooter,
+    } = telegram;
+
+    const existingTelegramConfig = await db.TelegramConfig.findOne({
+      where: { rateId: id },
+      transaction,
+    });
+
+    if (existingTelegramConfig) {
+      // Update existing telegram config
+      await existingTelegramConfig.update(
+        {
+          botToken,
+          chatId,
+          messageHeader: messageHeader || null,
+          messageFooter: messageFooter || null,
+          notificationsEnabled: notificationsEnabled ?? false,
+        },
+        { transaction }
+      );
+    } else if (chatId && botToken) {
+      await db.TelegramConfig.create(
+        {
+          rateId: id,
+          botToken,
+          chatId,
+          messageHeader: messageHeader || null,
+          messageFooter: messageFooter || null,
+          notificationsEnabled: notificationsEnabled ?? false,
+          isConnected: false,
+        },
+        { transaction }
+      );
+    }
+  }
 
   if (currencyConfigs && currencyConfigs.length > 0) {
     await db.RateCurrencyConfig.destroy({
@@ -57,8 +76,6 @@ export const updateRate = withTransaction(async (req, res) => {
     for (const item of currencyConfigs) {
       const {
         id: currencyId,
-        effectiveFrom,
-        effectiveTo,
         bidMargin,
         bidShouldRound,
         bidRoundingDepth,
@@ -74,8 +91,6 @@ export const updateRate = withTransaction(async (req, res) => {
         {
           rateId: existingRate.id,
           currencyId,
-          effectiveFrom: effectiveFrom || new Date().toDateString(),
-          effectiveTo: effectiveTo || null,
           bidMargin: bidMargin,
           bidShouldRound: bidShouldRound ?? false,
           bidRoundingDepth: bidRoundingDepth ?? null,
@@ -90,6 +105,19 @@ export const updateRate = withTransaction(async (req, res) => {
       );
     }
   }
+
+  await existingRate.update(
+    {
+      name,
+      rateSourceId,
+      isPrivateRate,
+      startWorkingTime,
+      endWorkingTime,
+      newUpdatedAt,
+      prevUpdatedAt: existingRate?.newUpdatedAt,
+    },
+    { transaction }
+  );
 
   res.status(200).json(existingRate);
 });

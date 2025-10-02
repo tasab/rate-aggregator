@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
-  const Rate = sequelize.define(
-    'Rate',
+  const UserRate = sequelize.define(
+    'UserRate',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -19,32 +19,6 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      telegramBotToken: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      telegramChatId: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      telegramMessageHeader: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      telegramMessageFooter: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      telegramSuccessConnection: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-        allowNull: false,
-      },
-      telegramNotificationsEnabled: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-        allowNull: false,
-      },
       isPrivateRate: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
@@ -58,27 +32,40 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.TIME,
         allowNull: true,
       },
+      newUpdatedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      prevUpdatedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
     },
     {
-      tableName: 'rates',
+      tableName: 'user_rates',
       timestamps: true,
       underscored: true,
     }
   );
 
-  Rate.associate = (models) => {
-    Rate.belongsTo(models.User, { foreignKey: 'userId' });
-    Rate.belongsTo(models.RateSource, {
+  UserRate.associate = (models) => {
+    UserRate.belongsTo(models.User, { foreignKey: 'userId' });
+    UserRate.belongsTo(models.RateSource, {
       foreignKey: 'rateSourceId',
       as: 'rateSource',
     });
-
-    Rate.hasMany(models.RateCurrencyConfig, {
+    UserRate.hasMany(models.RateCurrencyConfig, {
       foreignKey: 'rateId',
       as: 'currencyConfigs',
       onDelete: 'CASCADE',
     });
+
+    UserRate.hasOne(models.TelegramConfig, {
+      foreignKey: 'rateId',
+      as: 'telegramConfig',
+      onDelete: 'CASCADE',
+    });
   };
 
-  return Rate;
+  return UserRate;
 };

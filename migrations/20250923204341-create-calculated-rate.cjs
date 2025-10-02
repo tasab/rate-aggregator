@@ -2,18 +2,18 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('rate_source_data', {
+    await queryInterface.createTable('calculated_rates', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      rate_source_id: {
+      rate_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'rate_sources',
+          model: 'user_rates',
           key: 'id',
         },
         onUpdate: 'CASCADE',
@@ -31,9 +31,19 @@ module.exports = {
         type: Sequelize.DECIMAL(15, 6),
         allowNull: true,
       },
-      fetched_at: {
+      source_rate_data_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'rate_source_data',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'RESTRICT',
+      },
+      calculated_at: {
         type: Sequelize.DATE,
-        allowNull: true,
+        allowNull: false,
       },
       created_at: {
         allowNull: false,
@@ -46,23 +56,23 @@ module.exports = {
     });
 
     // Add performance indexes
-    await queryInterface.addIndex('rate_source_data', {
-      fields: ['rate_source_id', 'code'],
-      name: 'rate_source_data_source_currency_idx',
+    await queryInterface.addIndex('calculated_rates', {
+      fields: ['rate_id'],
+      name: 'calculated_rates_rate_id_idx',
     });
 
-    await queryInterface.addIndex('rate_source_data', {
-      fields: ['fetched_at'],
-      name: 'rate_source_data_fetched_at_idx',
+    await queryInterface.addIndex('calculated_rates', {
+      fields: ['source_rate_data_id'],
+      name: 'calculated_rates_source_rate_data_id_idx',
     });
 
-    await queryInterface.addIndex('rate_source_data', {
-      fields: ['code'],
-      name: 'rate_source_data_code_idx',
+    await queryInterface.addIndex('calculated_rates', {
+      fields: ['calculated_at'],
+      name: 'calculated_rates_calculated_at_idx',
     });
   },
 
   async down(queryInterface) {
-    await queryInterface.dropTable('rate_source_data');
+    await queryInterface.dropTable('calculated_rates');
   },
 };

@@ -11,8 +11,18 @@ import workerRouter from './workerRouter.js';
 import { Router } from 'express';
 import { verifyToken } from '../controllers/auth/verifyToken.js';
 import { getServerTime } from '../controllers/time.js';
+import DBHealthRouter from './DBHealthRouter.js';
 
 const mainRouter = Router();
+
+mainRouter.use('/db', DBHealthRouter);
+
+mainRouter.get('/health', (req, res) => {
+  res.status(200).json({
+    status: 'OK',
+    timestamp: new Date().toISOString(),
+  });
+});
 
 mainRouter.post('/register', register);
 mainRouter.post('/login', login);

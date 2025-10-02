@@ -3,6 +3,7 @@ import {
   ROUND_DOWN,
   ROUND_UP,
 } from '../constants/roundingType.js';
+import RATE_EMOJI from '../constants/rateEmoji.js';
 
 export const applyMargin = (price, margin) => {
   const result = Number(price) + Number(margin);
@@ -53,4 +54,71 @@ export const parseRate = (rate, config) => {
     bid: adjustedBid,
     sell: adjustedSell,
   };
+};
+
+export const hasRateChanged = (prev, current) => {
+  const sellChanged = parseFloat(prev?.sell) !== parseFloat(current?.sell);
+  const bidChanged = parseFloat(prev?.bid) !== parseFloat(current?.bid);
+  return sellChanged || bidChanged;
+};
+
+export const getString = (price) => {
+  if (price === undefined || price === null) {
+    return '';
+  }
+
+  const normalizedPrice =
+    typeof price === 'string' ? price.replace(',', '.') : price;
+  const numPrice = parseFloat(normalizedPrice);
+
+  if (isNaN(numPrice)) {
+    return '';
+  }
+
+  return numPrice.toString();
+};
+
+export const getNumber = (price) => {
+  if (price === undefined || price === null) {
+    return 0;
+  }
+
+  const normalizedPrice =
+    typeof price === 'string' ? price.replace(',', '.') : price;
+  const numPrice = parseFloat(normalizedPrice);
+
+  if (isNaN(numPrice)) {
+    return 0;
+  }
+
+  return numPrice;
+};
+
+export const getUpperCode = (code) => {
+  if (code === undefined || code === null || typeof code !== 'string') {
+    return '';
+  }
+
+  return code.toUpperCase();
+};
+
+export const getLowerCode = (code) => {
+  if (code === undefined || code === null || typeof code !== 'string') {
+    return '';
+  }
+
+  return code.toLowerCase();
+};
+
+export const getCurrencyEmoji = (code) => {
+  return RATE_EMOJI?.[code?.toLowerCase()] || '💱';
+};
+
+export const getTrendIcon = (newPrice, prevPrice) => {
+  if (newPrice > prevPrice) {
+    return '🟩';
+  } else if (newPrice < prevPrice) {
+    return '🟥';
+  }
+  return '';
 };

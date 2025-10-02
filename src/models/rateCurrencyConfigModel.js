@@ -13,8 +13,6 @@ export default (sequelize, DataTypes) => {
         autoIncrement: true,
         primaryKey: true,
       },
-      effectiveFrom: { type: DataTypes.DATE, allowNull: false },
-      effectiveTo: { type: DataTypes.DATE, allowNull: true },
       rateId: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -43,7 +41,6 @@ export default (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: ROUND_DEFAULT,
       },
-
       sellMargin: {
         type: DataTypes.DECIMAL(10, 4),
         allowNull: false,
@@ -77,7 +74,7 @@ export default (sequelize, DataTypes) => {
   );
 
   RateCurrencyConfig.associate = (models) => {
-    RateCurrencyConfig.belongsTo(models.Rate, { foreignKey: 'rateId' });
+    RateCurrencyConfig.belongsTo(models.UserRate, { foreignKey: 'rateId' });
     RateCurrencyConfig.belongsTo(models.Currency, {
       foreignKey: 'currencyId',
       as: 'currency',

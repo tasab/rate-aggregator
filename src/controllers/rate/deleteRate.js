@@ -1,4 +1,5 @@
 import db from '../../models/index.js';
+import { findUserRateById } from '../../query/userRateQueries.js';
 
 export const deleteRate = async (req, res) => {
   const transaction = await db.sequelize.transaction();
@@ -8,7 +9,7 @@ export const deleteRate = async (req, res) => {
     return res.status(400).json({ message: 'Rate ID is required' });
   }
 
-  const rate = await db.Rate.findByPk(id, { transaction });
+  const rate = await findUserRateById(id, [], transaction);
 
   if (!rate) {
     return res.status(404).json({ message: 'Rate not found' });

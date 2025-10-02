@@ -1,16 +1,25 @@
 import db from '../../models/index.js';
 import { Op } from 'sequelize';
 import { withTransaction } from '../../middleware/withTransaction.js';
+import { findRateSourceById } from '../../query/rateSourceQueries.js';
+import { CURRENCY_INCLUDE } from '../../query/includes.js';
 
 export const updateRateSource = withTransaction(async (req, res) => {
-  const { rateSourceId } = req.body;
+  const rateSourceId = req.params?.id;
 
-  const { name, type, location, link, rateSourceOrderId, currencyIds } =
-    req.body;
+  const {
+    name,
+    type,
+    location,
+    link,
+    rateSourceOrderId,
+    currencyIds,
+    newUpdatedAt,
+  } = req.body;
 
   const { transaction } = req;
 
-  const rateSource = await db.RateSource.findByPk(rateSourceId);
+  const rateSource = await findRateSourceById(rateSourceId);
 
   if (!rateSource) {
     return res.status(404).send({ message: 'RateSource not found' });
@@ -22,6 +31,7 @@ export const updateRateSource = withTransaction(async (req, res) => {
   if (link !== undefined) rateSource.link = link;
   if (rateSourceOrderId !== undefined)
     rateSource.rateSourceOrderId = rateSourceOrderId;
+  if (newUpdatedAt !== undefined) rateSource.newUpdatedAt = newUpdatedAt;
 
   await rateSource.save({ transaction });
 
@@ -39,16 +49,9 @@ export const updateRateSource = withTransaction(async (req, res) => {
     await rateSource.setCurrencies(currencies, { transaction });
   }
 
-  const updatedRateSource = await db.RateSource.findByPk(rateSourceId, {
-    include: [
-      {
-        model: db.Currency,
-        through: { attributes: [] }, // виключити join-таблицю
-        attributes: ['id', 'code', 'fullName'],
-        as: 'currencies',
-      },
-    ],
-  });
+  const updatedRateSource = await findRateSourceById(rateSourceId, [
+    CURRENCY_INCLUDE,
+  ]);
 
   return res.status(200).send(updatedRateSource);
 });

@@ -3,7 +3,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('rate_sources', {
+    await queryInterface.createTable('user_rates', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -14,38 +14,38 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      type: {
-        type: Sequelize.ENUM('PRIVATE', 'BANK', 'CANTOR'),
-        allowNull: false,
-        defaultValue: 'CANTOR',
-      },
-      controller_type: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      location: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      link: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      rate_source_order_id: {
+      user_id: {
         type: Sequelize.INTEGER,
-        allowNull: true,
-        unique: true,
+        allowNull: false,
         references: {
-          model: 'rate_source_orders',
+          model: 'users',
           key: 'id',
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
+        onDelete: 'CASCADE',
       },
-      currency_count: {
-        allowNull: false,
+      rate_source_id: {
         type: Sequelize.INTEGER,
-        defaultValue: 0,
+        allowNull: false,
+        references: {
+          model: 'rate_sources',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
+      is_private_rate: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
+      start_working_time: {
+        type: Sequelize.TIME,
+        allowNull: true,
+      },
+      end_working_time: {
+        type: Sequelize.TIME,
+        allowNull: true,
       },
       new_updated_at: {
         allowNull: true,
@@ -66,6 +66,6 @@ module.exports = {
     });
   },
   async down(queryInterface) {
-    await queryInterface.dropTable('rate_sources');
+    await queryInterface.dropTable('user_rates');
   },
 };

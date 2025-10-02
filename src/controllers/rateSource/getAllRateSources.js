@@ -1,4 +1,4 @@
-import { Op, fn, col, Sequelize } from 'sequelize';
+import { Op } from 'sequelize';
 import db from '../../models/index.js';
 import { logger } from '../../utils/logger.js';
 
@@ -27,36 +27,22 @@ export const getRateSources = async (req, res) => {
       };
     }
 
-    const currencyCountCol = fn('COUNT', col('currencies.id'));
-
-    let havingClause = {};
+    // Add currency count filtering using the physical field
     const parsedMinCount = minCurrencyCount ? parseInt(minCurrencyCount) : null;
     const parsedMaxCount = maxCurrencyCount ? parseInt(maxCurrencyCount) : null;
 
-    const isValidMin = !isNaN(parsedMinCount);
-    const isValidMax = !isNaN(parsedMaxCount);
-
-    if (isValidMin || isValidMax) {
-      if (isValidMin && isValidMax && parsedMinCount === parsedMaxCount) {
-        havingClause = Sequelize.where(currencyCountCol, parsedMinCount);
+    if (!isNaN(parsedMinCount)) {
+      whereClause.currencyCount = { [Op.gte]: parsedMinCount };
+    }
+    if (!isNaN(parsedMaxCount)) {
+      if (whereClause.currencyCount) {
+        whereClause.currencyCount[Op.lte] = parsedMaxCount;
       } else {
-        const conditions = [];
-        if (isValidMin) {
-          conditions.push(
-            Sequelize.where(currencyCountCol, { [Op.gte]: parsedMinCount })
-          );
-        }
-        if (isValidMax) {
-          conditions.push(
-            Sequelize.where(currencyCountCol, { [Op.lte]: parsedMaxCount })
-          );
-        }
-        havingClause =
-          conditions.length > 1 ? { [Op.and]: conditions } : conditions[0];
+        whereClause.currencyCount = { [Op.lte]: parsedMaxCount };
       }
     }
 
-    const results = await db.RateSource.findAll({
+    const { count, rows } = await db.RateSource.findAndCountAll({
       where: whereClause,
       attributes: [
         'id',
@@ -68,44 +54,31 @@ export const getRateSources = async (req, res) => {
         ['rate_source_order_id', 'rateSourceOrderId'],
         ['created_at', 'createdAt'],
         ['updated_at', 'updatedAt'],
-        [currencyCountCol, 'currencyCount'],
+        ['currency_count', 'currencyCount'], // Use the physical field
       ],
       include: [
         {
           model: db.Currency,
           as: 'currencies',
-          attributes: [],
+          attributes: ['id', 'code', 'fullName', 'createdAt', 'updatedAt'],
           through: {
             attributes: [],
           },
         },
       ],
-      group: [
-        'RateSource.id',
-        'RateSource.name',
-        'RateSource.type',
-        'RateSource.controller_type',
-        'RateSource.location',
-        'RateSource.link',
-        'RateSource.rate_source_order_id',
-        'RateSource.created_at',
-        'RateSource.updated_at',
-      ],
-      having: havingClause,
-      raw: true,
+      limit: parseInt(limit),
+      offset,
       order: [['id', 'ASC']],
     });
 
-    const totalItems = results.length;
-    const totalPages = Math.ceil(totalItems / limit);
-    const paginatedResults = results.slice(offset, offset + parseInt(limit));
+    const totalPages = Math.ceil(count / limit);
 
     return res.status(200).json({
-      data: paginatedResults,
+      data: rows,
       pagination: {
         currentPage: parseInt(page),
         totalPages,
-        totalItems,
+        totalItems: count,
         itemsPerPage: parseInt(limit),
         hasNextPage: page < totalPages,
         hasPreviousPage: page > 1,

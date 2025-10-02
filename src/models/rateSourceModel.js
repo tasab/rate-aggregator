@@ -33,6 +33,19 @@ export default (sequelize, DataTypes) => {
         allowNull: true,
         unique: true,
       },
+      currencyCount: {
+        allowNull: false,
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
+      newUpdatedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      prevUpdatedAt: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
     },
     {
       tableName: 'rate_sources',
@@ -42,7 +55,7 @@ export default (sequelize, DataTypes) => {
   );
 
   RateSource.associate = (models) => {
-    RateSource.hasMany(models.Rate, { foreignKey: 'rateSourceId' });
+    RateSource.hasMany(models.UserRate, { foreignKey: 'rateSourceId' });
     RateSource.belongsTo(models.RateSourceOrder, {
       foreignKey: 'rateSourceOrderId',
       as: 'rateSourceOrder',

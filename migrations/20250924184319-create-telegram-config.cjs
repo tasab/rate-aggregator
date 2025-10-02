@@ -3,75 +3,49 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('rates', {
+    await queryInterface.createTable('telegram_configs', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      name: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
-      user_id: {
+      rate_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        unique: true,
         references: {
-          model: 'users',
+          model: 'user_rates',
           key: 'id',
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      rate_source_id: {
-        type: Sequelize.INTEGER,
+      bot_token: {
+        type: Sequelize.STRING,
         allowNull: false,
-        references: {
-          model: 'rate_sources',
-          key: 'id',
-        },
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
       },
-      telegram_bot_token: {
+      chat_id: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      message_header: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      telegram_chat_id: {
+      message_footer: {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      telegram_message_header: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      telegram_message_footer: {
-        type: Sequelize.STRING,
-        allowNull: true,
-      },
-      telegram_notifications_enabled: {
+      is_connected: {
         type: Sequelize.BOOLEAN,
-        defaultValue: false,
         allowNull: false,
+        defaultValue: false,
       },
-      telegram_success_connection: {
+      notifications_enabled: {
         type: Sequelize.BOOLEAN,
-        defaultValue: false,
         allowNull: false,
-      },
-      is_private_rate: {
-        type: Sequelize.BOOLEAN,
         defaultValue: false,
-        allowNull: false,
-      },
-      start_working_time: {
-        type: Sequelize.TIME,
-        allowNull: true,
-      },
-      end_working_time: {
-        type: Sequelize.TIME,
-        allowNull: true,
       },
       created_at: {
         allowNull: false,
@@ -82,8 +56,11 @@ module.exports = {
         type: Sequelize.DATE,
       },
     });
+
+    await queryInterface.addIndex('telegram_configs', ['rate_id']);
   },
+
   async down(queryInterface) {
-    await queryInterface.dropTable('rates');
+    await queryInterface.dropTable('telegram_configs');
   },
 };

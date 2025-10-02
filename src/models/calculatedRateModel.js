@@ -1,13 +1,13 @@
 export default (sequelize, DataTypes) => {
-  const RateSourceData = sequelize.define(
-    'RateSourceData',
+  const CalculatedRate = sequelize.define(
+    'CalculatedRate',
     {
       id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      rateSourceId: {
+      rateId: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
@@ -23,29 +23,34 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.DECIMAL(15, 6),
         allowNull: true,
       },
-      fetchedAt: {
+      sourceRateDataId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      calculatedAt: {
         type: DataTypes.DATE,
-        allowNull: true,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
       },
     },
     {
-      tableName: 'rate_source_data',
+      tableName: 'calculated_rates',
       timestamps: true,
       underscored: true,
     }
   );
 
-  RateSourceData.associate = (models) => {
-    RateSourceData.belongsTo(models.RateSource, {
-      foreignKey: 'rateSourceId',
-      as: 'rateSource',
+  CalculatedRate.associate = (models) => {
+    CalculatedRate.belongsTo(models.UserRate, {
+      foreignKey: 'rateId',
+      as: 'rate',
     });
 
-    RateSourceData.hasMany(models.CalculatedRate, {
+    CalculatedRate.belongsTo(models.RateSourceData, {
       foreignKey: 'sourceRateDataId',
-      as: 'calculatedRates',
+      as: 'sourceRateData',
     });
   };
 
-  return RateSourceData;
+  return CalculatedRate;
 };

@@ -23,8 +23,8 @@ const nbuWorkerCore = async (page, rateSource) => {
       const nameElement = pair.querySelector('.names span');
       if (!nameElement) return;
 
-      const currencyCode = nameElement.firstChild?.textContent?.trim();
-      if (!currencyCode) return;
+      const code = nameElement.firstChild?.textContent?.trim();
+      if (!code) return;
 
       const saleElement = pair.querySelector('.sale span');
       const rate = saleElement
@@ -32,7 +32,7 @@ const nbuWorkerCore = async (page, rateSource) => {
         : null;
 
       results.push({
-        code: currencyCode.toLowerCase(),
+        code: code.toLowerCase(),
         sell: null,
         bid: rate,
         updated: new Date().toString(),
