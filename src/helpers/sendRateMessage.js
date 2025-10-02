@@ -14,7 +14,6 @@ import {
 
 export const sendRateUpdateMessage = async (rateData) => {
   const { rate, newRate, prevRate } = rateData;
-  console.log(rate?.telegramConfig, 'rate.telegramConfig');
   try {
     if (
       !rate?.telegramConfig?.botToken ||

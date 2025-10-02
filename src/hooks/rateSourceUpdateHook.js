@@ -3,7 +3,10 @@ import { LOG_SUCCESS, logger } from '../utils/logger.js';
 import { sendRateUpdateMessage } from '../helpers/sendRateMessage.js';
 import { processRateCalculations } from '../utils/rateProcessor.js';
 import { findAllUserRates } from '../query/userRateQueries.js';
-import { CURRENCY_CONFIGS_INCLUDE } from '../query/includes.js';
+import {
+  CURRENCY_CONFIGS_INCLUDE,
+  TELEGRAM_INCLUDE,
+} from '../query/includes.js';
 import { findAllRateSourceData } from '../query/rateSourceDataQueries.js';
 
 export const rateSourceUpdateHook = async (rateSourceInstance, options) => {
@@ -21,7 +24,7 @@ export const rateSourceUpdateHook = async (rateSourceInstance, options) => {
 
   const rates = await findAllUserRates(
     { rateSourceId },
-    [CURRENCY_CONFIGS_INCLUDE],
+    [CURRENCY_CONFIGS_INCLUDE, TELEGRAM_INCLUDE],
     transaction
   );
 
@@ -71,6 +74,7 @@ export const rateSourceUpdateHook = async (rateSourceInstance, options) => {
   const sendTgMessagePromises = ratesData.map((rateConfig) =>
     sendRateUpdateMessage(rateConfig)
   );
+
   const ratesToUpdatePromises = Array.from(ratesToUpdate).map(
     ([rateId, prevUpdatedAt]) => {
       return db.UserRate.update(
