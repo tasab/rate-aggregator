@@ -16,7 +16,7 @@ export const createRate = withTransaction(async (req, res) => {
     isPrivateRate,
     startWorkingTime,
     endWorkingTime,
-    telegram,
+    telegramConfig,
   } = req.body;
   const processDate = new Date();
   const rateSource = await findRateSourceById(rateSourceId, [], transaction);
@@ -44,14 +44,14 @@ export const createRate = withTransaction(async (req, res) => {
     { transaction }
   );
 
-  if (telegram) {
+  if (telegramConfig) {
     const {
       chatId,
       botToken,
       notificationsEnabled,
       messageHeader,
       messageFooter,
-    } = telegram;
+    } = telegramConfig;
 
     if (chatId && botToken) {
       await db.TelegramConfig.create(

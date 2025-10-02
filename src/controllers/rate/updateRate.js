@@ -9,7 +9,7 @@ export const updateRate = withTransaction(async (req, res) => {
     rateSourceId,
     currencyConfigs,
     isPrivateRate,
-    telegram,
+    telegramConfig,
     startWorkingTime,
     endWorkingTime,
   } = req.body;
@@ -25,46 +25,32 @@ export const updateRate = withTransaction(async (req, res) => {
     return res.status(404).json({ error: 'Rate not found' });
   }
 
-  if (telegram) {
+  if (telegramConfig) {
     const {
       chatId,
       botToken,
       notificationsEnabled,
       messageHeader,
       messageFooter,
-    } = telegram;
+    } = telegramConfig;
 
-    const existingTelegramConfig = await db.TelegramConfig.findOne({
+    await db.TelegramConfig.destroy({
       where: { rateId: id },
       transaction,
     });
 
-    if (existingTelegramConfig) {
-      // Update existing telegram config
-      await existingTelegramConfig.update(
-        {
-          botToken,
-          chatId,
-          messageHeader: messageHeader || null,
-          messageFooter: messageFooter || null,
-          notificationsEnabled: notificationsEnabled ?? false,
-        },
-        { transaction }
-      );
-    } else if (chatId && botToken) {
-      await db.TelegramConfig.create(
-        {
-          rateId: id,
-          botToken,
-          chatId,
-          messageHeader: messageHeader || null,
-          messageFooter: messageFooter || null,
-          notificationsEnabled: notificationsEnabled ?? false,
-          isConnected: false,
-        },
-        { transaction }
-      );
-    }
+    await db.TelegramConfig.create(
+      {
+        rateId: id,
+        botToken: botToken || '',
+        chatId: chatId || '',
+        messageHeader: messageHeader || null,
+        messageFooter: messageFooter || null,
+        notificationsEnabled: notificationsEnabled ?? false,
+        isConnected: false,
+      },
+      { transaction }
+    );
   }
 
   if (currencyConfigs && currencyConfigs.length > 0) {

@@ -14,9 +14,13 @@ import {
 
 export const sendRateUpdateMessage = async (rateData) => {
   const { rate, newRate, prevRate } = rateData;
-
+  console.log(rate?.telegramConfig, 'rate.telegramConfig');
   try {
-    if (!rate?.telegram?.botToken || !rate?.telegram?.chatId) {
+    if (
+      !rate?.telegramConfig?.botToken ||
+      !rate?.telegramConfig?.chatId ||
+      !rate?.telegramConfig?.notificationsEnabled
+    ) {
       logger(
         null,
         `Rate ${rate.id} doesn't have telegram configuration, skipping`,
@@ -35,7 +39,7 @@ export const sendRateUpdateMessage = async (rateData) => {
       return;
     }
 
-    const bot = new TelegramBot(rate.telegramBotToken);
+    const bot = new TelegramBot(rate.telegramConfig.botToken);
     const rateMessages = [];
 
     for (const newRateItem of newRate) {
@@ -67,17 +71,17 @@ export const sendRateUpdateMessage = async (rateData) => {
 
     let finalMessage = '';
 
-    if (rate?.telegram?.messageHeader) {
-      finalMessage += `${rate.telegram.messageHeader}\n`;
+    if (rate?.telegramConfig?.messageHeader) {
+      finalMessage += `${rate.telegramConfig.messageHeader}\n`;
     }
 
     finalMessage += rateMessages.join('\n');
 
-    if (rate?.telegram?.messageFooter) {
-      finalMessage += `\n${rate?.telegram?.messageFooter}`;
+    if (rate?.telegramConfig?.messageFooter) {
+      finalMessage += `\n${rate?.telegramConfig?.messageFooter}`;
     }
 
-    await bot.sendMessage(rate.telegramChatId, finalMessage);
+    await bot.sendMessage(rate.telegramConfig?.chatId, finalMessage);
 
     logger(
       null,

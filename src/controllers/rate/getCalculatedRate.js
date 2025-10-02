@@ -18,7 +18,6 @@ export const getCalculatedRate = async (req, res) => {
       [],
       transaction
     );
-    // console.log(prevRatesInstances, 'prevRatesInstances1');
 
     const newRatesInstances = await findAllCalculatedRates(
       { calculatedAt: rate?.newUpdatedAt },

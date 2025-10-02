@@ -60,15 +60,6 @@ export const userRateUpdateHook = async (rateInstance, options) => {
         prevRate: previousCalculatedRates,
       };
 
-      await db.UserRate.update(
-        { newUpdatedAt },
-        {
-          where: {
-            id: rateId,
-          },
-          transaction,
-        }
-      );
       await Promise.all([
         ...calculatedRatesPromises,
         sendRateUpdateMessage(rateData),

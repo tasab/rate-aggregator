@@ -3,6 +3,7 @@ import { findAllUserRates } from '../../query/userRateQueries.js';
 import {
   CURRENCY_CONFIGS_INCLUDE,
   RATE_SOURCE_INCLUDE,
+  TELEGRAM_INCLUDE,
 } from '../../query/includes.js';
 
 export const getAllRates = async (req, res) => {
@@ -15,6 +16,7 @@ export const getAllRates = async (req, res) => {
     const rates = await findAllUserRates({ userId }, [
       CURRENCY_CONFIGS_INCLUDE,
       RATE_SOURCE_INCLUDE,
+      TELEGRAM_INCLUDE,
     ]);
 
     res.status(200).json(rates);

@@ -49,7 +49,7 @@ export const processRateCalculations = async (
         code: getLowerCode(config?.currency?.code),
       });
 
-      const calculatedRatePromise = db.CalculatedRate.create(
+      const calculatedRatePromise = await db.CalculatedRate.create(
         {
           rateId: rate?.id,
           code: config?.currency?.code,
