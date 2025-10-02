@@ -1,7 +1,6 @@
 import { logger } from '../../utils/logger.js';
-import { findRateById } from '../../query/rateQueries.js';
+import { findUserRateById } from '../../query/userRateQueries.js';
 import { findAllCalculatedRates } from '../../query/calculatedRateQueries.js';
-import { getNumber } from '../../utils/rateUtils.js';
 
 export const getCalculatedRate = async (req, res) => {
   try {
@@ -12,13 +11,14 @@ export const getCalculatedRate = async (req, res) => {
       return res.status(400).json({ message: 'rateId is required' });
     }
 
-    const rate = await findRateById(rateId, [], transaction);
+    const rate = await findUserRateById(rateId, [], transaction);
 
     const prevRatesInstances = await findAllCalculatedRates(
       { calculatedAt: rate?.prevUpdatedAt },
       [],
       transaction
     );
+    // console.log(prevRatesInstances, 'prevRatesInstances1');
 
     const newRatesInstances = await findAllCalculatedRates(
       { calculatedAt: rate?.newUpdatedAt },
@@ -30,7 +30,7 @@ export const getCalculatedRate = async (req, res) => {
     const newRates = newRatesInstances.map((rate) => rate.toJSON());
 
     if (!newRates.length) {
-      return res.status(404).json({ message: 'Rates not found' });
+      return res.status(404).json({ message: 'Current rates not found' });
     }
 
     if (!rate) {

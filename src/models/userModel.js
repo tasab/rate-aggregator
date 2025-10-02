@@ -29,7 +29,7 @@ export default (sequelize, DataTypes) => {
   );
 
   User.associate = (models) => {
-    User.hasMany(models.Rate, { foreignKey: 'userId' });
+    User.hasMany(models.UserRate, { foreignKey: 'userId' });
     User.hasMany(models.RateSourceOrder, {
       foreignKey: 'userId',
       as: 'rateSourceOrders',

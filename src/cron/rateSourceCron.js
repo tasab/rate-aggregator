@@ -6,7 +6,7 @@ export const startFetchRateSource = () => {
   const cronTimer = isProd ? '0 * * * *' : '30 */2 * * *';
   // fetchRawRatesFromSources();
 
-  // cron.schedule(cronTimer, async () => {
-  //   await fetchRawRatesFromSources();
-  // });
+  cron.schedule(cronTimer, async () => {
+    await fetchRawRatesFromSources();
+  });
 };

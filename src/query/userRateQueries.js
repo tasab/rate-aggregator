@@ -20,7 +20,7 @@ const getRateIncludes = () => ({
   [RATE_SOURCE_INCLUDE]: {
     model: db.RateSource,
     as: 'rateSource',
-    attributes: ['id', 'name', 'type', 'location', 'link'],
+    attributes: ['id', 'name', 'type', 'location', 'link', 'controllerType'],
     include: [
       {
         model: db.Currency,
@@ -35,18 +35,18 @@ const getRateIncludes = () => ({
   },
 });
 
-export const findRateById = (id, includeKeys = [], transaction) => {
+export const findUserRateById = (id, includeKeys = [], transaction) => {
   const include = includeKeys
     .map((key) => getRateIncludes()[key])
     .filter(Boolean);
 
-  return db.Rate.findByPk(id, {
+  return db.UserRate.findByPk(id, {
     include,
     transaction,
   });
 };
 
-export const findAllRates = (
+export const findAllUserRates = (
   where = {},
   includeKeys = [],
   transaction = null
@@ -55,7 +55,7 @@ export const findAllRates = (
     .map((key) => getRateIncludes()[key])
     .filter(Boolean);
 
-  return db.Rate.findAll({
+  return db.UserRate.findAll({
     where,
     include,
     transaction,

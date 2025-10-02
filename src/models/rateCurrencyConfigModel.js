@@ -74,7 +74,7 @@ export default (sequelize, DataTypes) => {
   );
 
   RateCurrencyConfig.associate = (models) => {
-    RateCurrencyConfig.belongsTo(models.Rate, { foreignKey: 'rateId' });
+    RateCurrencyConfig.belongsTo(models.UserRate, { foreignKey: 'rateId' });
     RateCurrencyConfig.belongsTo(models.Currency, {
       foreignKey: 'currencyId',
       as: 'currency',

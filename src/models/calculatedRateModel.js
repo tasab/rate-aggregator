@@ -41,7 +41,7 @@ export default (sequelize, DataTypes) => {
   );
 
   CalculatedRate.associate = (models) => {
-    CalculatedRate.belongsTo(models.Rate, {
+    CalculatedRate.belongsTo(models.UserRate, {
       foreignKey: 'rateId',
       as: 'rate',
     });

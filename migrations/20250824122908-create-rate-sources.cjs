@@ -42,6 +42,11 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL',
       },
+      currency_count: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+      },
       new_updated_at: {
         allowNull: true,
         type: Sequelize.DATE,

@@ -2,7 +2,7 @@ import Sequelize, { DataTypes } from 'sequelize';
 import config from 'config';
 
 import UserModel from './userModel.js';
-import RateModel from './rateModel.js';
+import UserRateModel from './userRateModel.js';
 import CurrencyModel from './currencyModel.js';
 import RateSourceModel from './rateSourceModel.js';
 import RateCurrencyConfigModel from './rateCurrencyConfigModel.js';
@@ -23,7 +23,7 @@ const sequelize = new Sequelize(
 
 db.User = UserModel(sequelize, DataTypes);
 db.Currency = CurrencyModel(sequelize, DataTypes);
-db.Rate = RateModel(sequelize, DataTypes);
+db.UserRate = UserRateModel(sequelize, DataTypes);
 db.RateSource = RateSourceModel(sequelize, DataTypes);
 db.RateCurrencyConfig = RateCurrencyConfigModel(sequelize, DataTypes);
 db.RateSourceOrder = RateSourceOrderModer(sequelize, DataTypes);

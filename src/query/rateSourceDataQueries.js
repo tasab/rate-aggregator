@@ -7,7 +7,7 @@ export const findRateSourceDataById = (id, includeKeys = [], transaction) => {
     .map((key) => getRateSourceDataIncludes()[key])
     .filter(Boolean);
 
-  return db.Rate.findByPk(id, {
+  return db.UserRate.findByPk(id, {
     include,
     transaction,
   });

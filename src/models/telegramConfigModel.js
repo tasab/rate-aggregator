@@ -48,7 +48,7 @@ export default (sequelize, DataTypes) => {
   );
 
   TelegramConfig.associate = (models) => {
-    TelegramConfig.belongsTo(models.Rate, {
+    TelegramConfig.belongsTo(models.UserRate, {
       foreignKey: 'rateId',
       as: 'rate',
     });

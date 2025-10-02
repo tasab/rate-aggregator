@@ -1,5 +1,5 @@
 import { LOG_ERROR, logger } from '../../utils/logger.js';
-import { findAllRates } from '../../query/rateQueries.js';
+import { findAllUserRates } from '../../query/userRateQueries.js';
 import {
   CURRENCY_CONFIGS_INCLUDE,
   RATE_SOURCE_INCLUDE,
@@ -12,7 +12,7 @@ export const getAllRates = async (req, res) => {
     if (!userId) {
       return res.status(400).json({ message: 'User ID is required' });
     }
-    const rates = await findAllRates({ userId }, [
+    const rates = await findAllUserRates({ userId }, [
       CURRENCY_CONFIGS_INCLUDE,
       RATE_SOURCE_INCLUDE,
     ]);

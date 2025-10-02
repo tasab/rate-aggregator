@@ -3,7 +3,7 @@
 module.exports = {
   async up(queryInterface) {
     await queryInterface.bulkInsert(
-      'rates',
+      'user_rates',
       [
         {
           id: 1,
@@ -50,15 +50,15 @@ module.exports = {
     );
 
     await queryInterface.sequelize.query(
-      "SELECT setval(pg_get_serial_sequence('rates', 'id'), COALESCE((SELECT MAX(id) FROM rates), 1), true);"
+      "SELECT setval(pg_get_serial_sequence('user_rates', 'id'), COALESCE((SELECT MAX(id) FROM user_rates), 1), true);"
     );
   },
 
   async down(queryInterface) {
-    await queryInterface.bulkDelete('rates', null, {});
+    await queryInterface.bulkDelete('user_rates', null, {});
 
     await queryInterface.sequelize.query(
-      "SELECT setval(pg_get_serial_sequence('rates', 'id'), 1, false);"
+      "SELECT setval(pg_get_serial_sequence('user_rates', 'id'), 1, false);"
     );
   },
 };

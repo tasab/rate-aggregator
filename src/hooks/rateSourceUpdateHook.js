@@ -2,14 +2,11 @@ import db from '../models/index.js';
 import { LOG_SUCCESS, logger } from '../utils/logger.js';
 import { sendRateUpdateMessage } from '../helpers/sendRateMessage.js';
 import { processRateCalculations } from '../utils/rateProcessor.js';
-import { findAllRates } from '../query/rateQueries.js';
+import { findAllUserRates } from '../query/userRateQueries.js';
 import { CURRENCY_CONFIGS_INCLUDE } from '../query/includes.js';
 import { findAllRateSourceData } from '../query/rateSourceDataQueries.js';
 
-export const processRateSourceUpdateHook = async (
-  rateSourceInstance,
-  options
-) => {
+export const rateSourceUpdateHook = async (rateSourceInstance, options) => {
   if (
     !rateSourceInstance.changed('newUpdatedAt') ||
     !rateSourceInstance.newUpdatedAt
@@ -22,7 +19,7 @@ export const processRateSourceUpdateHook = async (
   const processRatesAt = new Date();
   const rateSourceUpdatedAt = rateSourceInstance?.newUpdatedAt;
 
-  const rates = await findAllRates(
+  const rates = await findAllUserRates(
     { rateSourceId },
     [CURRENCY_CONFIGS_INCLUDE],
     transaction
@@ -76,7 +73,7 @@ export const processRateSourceUpdateHook = async (
   );
   const ratesToUpdatePromises = Array.from(ratesToUpdate).map(
     ([rateId, prevUpdatedAt]) => {
-      return db.Rate.update(
+      return db.UserRate.update(
         {
           newUpdatedAt: processRatesAt,
           prevUpdatedAt,

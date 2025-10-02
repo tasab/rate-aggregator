@@ -1,6 +1,6 @@
 import { withTransaction } from '../../middleware/withTransaction.js';
 import db from '../../models/index.js';
-import { findRateById } from '../../query/rateQueries.js';
+import { findUserRateById } from '../../query/userRateQueries.js';
 
 export const updateRate = withTransaction(async (req, res) => {
   const {
@@ -18,7 +18,7 @@ export const updateRate = withTransaction(async (req, res) => {
   if (!id) {
     return res.status(400).json({ error: 'Rate ID is required' });
   }
-  const existingRate = await findRateById(id, [], transaction);
+  const existingRate = await findUserRateById(id, [], transaction);
   const newUpdatedAt = new Date();
 
   if (!existingRate) {

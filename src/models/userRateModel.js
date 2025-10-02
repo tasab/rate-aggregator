@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
-  const Rate = sequelize.define(
-    'Rate',
+  const UserRate = sequelize.define(
+    'UserRate',
     {
       id: {
         type: DataTypes.INTEGER,
@@ -42,30 +42,30 @@ export default (sequelize, DataTypes) => {
       },
     },
     {
-      tableName: 'rates',
+      tableName: 'user_rates',
       timestamps: true,
       underscored: true,
     }
   );
 
-  Rate.associate = (models) => {
-    Rate.belongsTo(models.User, { foreignKey: 'userId' });
-    Rate.belongsTo(models.RateSource, {
+  UserRate.associate = (models) => {
+    UserRate.belongsTo(models.User, { foreignKey: 'userId' });
+    UserRate.belongsTo(models.RateSource, {
       foreignKey: 'rateSourceId',
       as: 'rateSource',
     });
-    Rate.hasMany(models.RateCurrencyConfig, {
+    UserRate.hasMany(models.RateCurrencyConfig, {
       foreignKey: 'rateId',
       as: 'currencyConfigs',
       onDelete: 'CASCADE',
     });
 
-    Rate.hasOne(models.TelegramConfig, {
+    UserRate.hasOne(models.TelegramConfig, {
       foreignKey: 'rateId',
       as: 'telegramConfig',
       onDelete: 'CASCADE',
     });
   };
 
-  return Rate;
+  return UserRate;
 };

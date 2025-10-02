@@ -49,22 +49,22 @@ export const processRateCalculations = async (
         code: getLowerCode(config?.currency?.code),
       });
 
+      const calculatedRatePromise = db.CalculatedRate.create(
+        {
+          rateId: rate?.id,
+          code: config?.currency?.code,
+          bid: newParsedRate?.bid,
+          sell: newParsedRate?.sell,
+          sourceRateDataId: sourceData?.id,
+          calculatedAt: newUpdatedAt,
+        },
+        { transaction }
+      );
+
+      calculatedRatesPromises.push(calculatedRatePromise);
+
       if (hasChanged) {
         rateHasChanges = true;
-
-        const calculatedRatePromise = db.CalculatedRate.upsert(
-          {
-            rateId: rate?.id,
-            code: config?.currency?.code,
-            bid: newParsedRate?.bid,
-            sell: newParsedRate?.sell,
-            sourceRateDataId: sourceData?.id,
-            calculatedAt: newUpdatedAt,
-          },
-          { transaction }
-        );
-
-        calculatedRatesPromises.push(calculatedRatePromise);
       }
     }
   }

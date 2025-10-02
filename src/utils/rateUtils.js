@@ -3,6 +3,7 @@ import {
   ROUND_DOWN,
   ROUND_UP,
 } from '../constants/roundingType.js';
+import RATE_EMOJI from '../constants/rateEmoji.js';
 
 export const applyMargin = (price, margin) => {
   const result = Number(price) + Number(margin);
@@ -107,4 +108,17 @@ export const getLowerCode = (code) => {
   }
 
   return code.toLowerCase();
+};
+
+export const getCurrencyEmoji = (code) => {
+  return RATE_EMOJI?.[code?.toLowerCase()] || '💱';
+};
+
+export const getTrendIcon = (newPrice, prevPrice) => {
+  if (newPrice > prevPrice) {
+    return '🟩';
+  } else if (newPrice < prevPrice) {
+    return '🟥';
+  }
+  return '';
 };

@@ -1,20 +1,16 @@
 import { LOG_ERROR, LOG_INFO, LOG_SUCCESS, logger } from '../utils/logger.js';
-import RATE_EMOJI from '../constants/rateEmoji.js';
-import { getLowerCode, getString, getUpperCode } from '../utils/rateUtils.js';
+import {
+  getCurrencyEmoji,
+  getLowerCode,
+  getString,
+  getTrendIcon,
+  getUpperCode,
+} from '../utils/rateUtils.js';
 import TelegramBot from 'node-telegram-bot-api';
-
-const getCurrencyEmoji = (code) => {
-  return RATE_EMOJI?.[code?.toLowerCase()] || '💱';
-};
-
-const getTrendIcon = (newPrice, prevPrice) => {
-  if (newPrice > prevPrice) {
-    return '🟩';
-  } else if (newPrice < prevPrice) {
-    return '🟥';
-  }
-  return '';
-};
+import {
+  getCurrentUkraineTime,
+  isWithinWorkingHours,
+} from '../utils/dateUtils.js';
 
 export const sendRateUpdateMessage = async (rateData) => {
   const { rate, newRate, prevRate } = rateData;
@@ -24,6 +20,16 @@ export const sendRateUpdateMessage = async (rateData) => {
       logger(
         null,
         `Rate ${rate.id} doesn't have telegram configuration, skipping`,
+        LOG_INFO
+      );
+      return;
+    }
+
+    if (!isWithinWorkingHours(rate.startWorkingTime, rate.endWorkingTime)) {
+      const currentTime = getCurrentUkraineTime();
+      logger(
+        null,
+        `Rate ${rate.id} is outside working hours. Current Ukraine time: ${currentTime}, Working hours: ${rate.startWorkingTime} - ${rate.endWorkingTime}`,
         LOG_INFO
       );
       return;
