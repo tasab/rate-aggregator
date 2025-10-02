@@ -12,6 +12,7 @@ import { Router } from 'express';
 import { verifyToken } from '../controllers/auth/verifyToken.js';
 import { getServerTime } from '../controllers/time.js';
 import DBHealthRouter from './DBHealthRouter.js';
+import { bootSourcesFetch } from '../controllers/bootSourcesFetch.js';
 
 const mainRouter = Router();
 
@@ -23,6 +24,8 @@ mainRouter.get('/health', (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+mainRouter.get('/boot', bootSourcesFetch);
 
 mainRouter.post('/register', register);
 mainRouter.post('/login', login);
