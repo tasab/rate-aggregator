@@ -1,6 +1,8 @@
 import { logger } from '../../utils/logger.js';
 import { findUserRateById } from '../../query/userRateQueries.js';
 import { findAllCalculatedRates } from '../../query/calculatedRateQueries.js';
+import { CURRENCY_CONFIGS_INCLUDE } from '../../query/includes.js';
+import { getLowerCode } from '../../utils/rateUtils.js';
 
 export const getCalculatedRate = async (req, res) => {
   try {
@@ -11,7 +13,11 @@ export const getCalculatedRate = async (req, res) => {
       return res.status(400).json({ message: 'rateId is required' });
     }
 
-    const rate = await findUserRateById(rateId, [], transaction);
+    const rate = await findUserRateById(
+      rateId,
+      [CURRENCY_CONFIGS_INCLUDE],
+      transaction
+    );
 
     const prevRatesInstances = await findAllCalculatedRates(
       { calculatedAt: rate?.prevUpdatedAt },
@@ -36,7 +42,21 @@ export const getCalculatedRate = async (req, res) => {
       return res.status(404).json({ message: 'Rate not found' });
     }
 
-    const calculatedRates = newRates.map((item) => ({
+    // Order newRates to match the same order as rate.currencyConfigs
+    const orderedNewRates = rate.currencyConfigs.reduce((acc, config) => {
+      const matchingRate = newRates.find(
+        (rateItem) =>
+          getLowerCode(rateItem.code) === getLowerCode(config.currency?.code)
+      );
+
+      if (matchingRate) {
+        acc.push(matchingRate);
+      }
+
+      return acc;
+    }, []);
+
+    const calculatedRates = orderedNewRates.map((item) => ({
       ...item,
       prev: prevRates.length
         ? prevRates.find((prevItem) => prevItem.code === item.code)

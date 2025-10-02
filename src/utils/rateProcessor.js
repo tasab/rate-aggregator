@@ -22,6 +22,8 @@ export const processRateCalculations = async (
   const newCalculatedRates = [];
   const calculatedRatesPromises = [];
 
+  rate.currencyConfigs.sort((a, b) => a.order - b.order);
+
   for (const config of rate.currencyConfigs) {
     const sourceData = rateSourceData.find(
       (data) =>
