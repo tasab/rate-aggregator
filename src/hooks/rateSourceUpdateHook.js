@@ -8,6 +8,7 @@ import {
   TELEGRAM_INCLUDE,
 } from '../query/includes.js';
 import { findAllRateSourceData } from '../query/rateSourceDataQueries.js';
+import { isWithinWorkingHours } from '../utils/dateUtils.js';
 
 export const rateSourceUpdateHook = async (rateSourceInstance, options) => {
   if (
@@ -22,11 +23,15 @@ export const rateSourceUpdateHook = async (rateSourceInstance, options) => {
   const processRatesAt = new Date();
   const rateSourceUpdatedAt = rateSourceInstance?.newUpdatedAt;
 
-  const rates = await findAllUserRates(
+  const allRates = await findAllUserRates(
     { rateSourceId },
     [CURRENCY_CONFIGS_INCLUDE, TELEGRAM_INCLUDE],
     transaction
   );
+
+  const ratesInWorkingHours = allRates.filter((rate) => {
+    return isWithinWorkingHours(rate.startWorkingTime, rate.endWorkingTime);
+  });
 
   const rateSourceData = await findAllRateSourceData(
     {
@@ -45,7 +50,7 @@ export const rateSourceUpdateHook = async (rateSourceInstance, options) => {
   const ratesToUpdate = new Map();
   const ratesData = [];
 
-  for (const rate of rates) {
+  for (const rate of ratesInWorkingHours) {
     const {
       rateHasChanges,
       newCalculatedRates,

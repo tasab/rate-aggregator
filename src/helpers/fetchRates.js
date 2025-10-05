@@ -2,6 +2,7 @@ import db from '../models/index.js';
 import { getRateSourceController } from '../utils/getRateSourceController.js';
 import { LOG_ERROR, logger } from '../utils/logger.js';
 import { findAllRateSources } from '../query/rateSourceQueries.js';
+import { getLowerCode } from '../utils/rateUtils.js';
 
 export const fetchRawRatesFromSources = async () => {
   try {
@@ -68,7 +69,7 @@ const saveRatesToDatabase = async (
   for (const rateData of rates) {
     dataToInsert.push({
       rateSourceId,
-      code: rateData.code,
+      code: getLowerCode(rateData.code),
       bid: rateData.bid,
       sell: rateData.sell,
       fetchedAt,

@@ -7,10 +7,6 @@ import {
   getUpperCode,
 } from '../utils/rateUtils.js';
 import TelegramBot from 'node-telegram-bot-api';
-import {
-  getCurrentUkraineTime,
-  isWithinWorkingHours,
-} from '../utils/dateUtils.js';
 
 export const sendRateUpdateMessage = async (rateData) => {
   const { rate, newRate, prevRate } = rateData;
@@ -23,16 +19,6 @@ export const sendRateUpdateMessage = async (rateData) => {
       logger(
         null,
         `Rate ${rate.id} doesn't have telegram configuration, skipping`,
-        LOG_INFO
-      );
-      return;
-    }
-
-    if (!isWithinWorkingHours(rate.startWorkingTime, rate.endWorkingTime)) {
-      const currentTime = getCurrentUkraineTime();
-      logger(
-        null,
-        `Rate ${rate.id} is outside working hours. Current Ukraine time: ${currentTime}, Working hours: ${rate.startWorkingTime} - ${rate.endWorkingTime}`,
         LOG_INFO
       );
       return;
