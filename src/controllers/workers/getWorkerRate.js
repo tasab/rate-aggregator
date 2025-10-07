@@ -1,4 +1,3 @@
-import db from '../../models/index.js';
 import { LOG_ERROR, logger } from '../../utils/logger.js';
 import { getRateSourceController } from '../../utils/getRateSourceController.js';
 import { findRateSourceById } from '../../query/rateSourceQueries.js';
@@ -8,7 +7,7 @@ export const getWorkerRate = async (req, res) => {
     const rateSourceId = req.query?.rateSourceId;
 
     const rateSource = await findRateSourceById(rateSourceId);
-
+    console.log(rateSource, 'rateSource1');
     if (!rateSource) {
       return res.status(400).json({ error: 'Rate Source not found' });
     }

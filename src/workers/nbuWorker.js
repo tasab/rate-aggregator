@@ -12,34 +12,29 @@ const nbuWorkerCore = async (page, rateSource) => {
   });
 
   const pageRates = await page.evaluate(() => {
-    const widget = document.querySelector('.widget-courses-nbu.wr_inner');
-    if (!widget) return [];
+    const rows = document.querySelectorAll('#exchangeRates tbody tr');
+    const result = [];
 
-    const results = [];
+    rows.forEach((row) => {
+      const codeEl = row.querySelector('td[data-label="Letter code"]');
+      const rateEl = row.querySelector('td[data-label="UAH"]');
 
-    const currencyPairs = widget.querySelectorAll('.currency-pairs');
+      if (!codeEl || !rateEl) return;
 
-    currencyPairs.forEach((pair) => {
-      const nameElement = pair.querySelector('.names span');
-      if (!nameElement) return;
+      const code = codeEl.textContent.trim().toLowerCase();
+      const rate = parseFloat(rateEl.textContent.trim().replace(',', '.'));
 
-      const code = nameElement.firstChild?.textContent?.trim();
-      if (!code) return;
-
-      const saleElement = pair.querySelector('.sale span');
-      const rate = saleElement
-        ? parseFloat(saleElement.textContent.trim())
-        : null;
-
-      results.push({
-        code: code.toLowerCase(),
-        sell: null,
-        bid: rate,
-        updated: new Date().toString(),
-      });
+      if (!isNaN(rate)) {
+        result.push({
+          code,
+          sell: null,
+          bid: rate,
+          updated: new Date().toString(),
+        });
+      }
     });
 
-    return results;
+    return result;
   });
 
   if (!pageRates || !Array.isArray(pageRates)) {
