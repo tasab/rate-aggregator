@@ -21,7 +21,7 @@ module.exports = {
         },
         {
           id: 2,
-          name: 'Приват банк (у відділеннях)',
+          name: 'Приват банк',
           type: 'BANK',
           controller_type: 'PRIVATE_BANK',
           location: 'Україна',

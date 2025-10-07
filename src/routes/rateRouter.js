@@ -4,6 +4,7 @@ import { getAllRates } from '../controllers/rate/getAllRates.js';
 import { deleteRate } from '../controllers/rate/deleteRate.js';
 import { getCalculatedRate } from '../controllers/rate/getCalculatedRate.js';
 import { updateRate } from '../controllers/rate/updateRate.js';
+
 const router = Router();
 
 router.post('/user-rate/create', createRate);
