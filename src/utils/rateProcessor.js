@@ -1,10 +1,7 @@
 import db from '../models/index.js';
-import {
-  getLowerCode,
-  getNumber,
-  hasRateChanged,
-  parseRate,
-} from './rateUtils.js';
+import { hasRateChanged, parseRate } from './rateUtils.js';
+import { getLowerCode } from './stringUtils.js';
+import { getNumber } from './numberUtils.js';
 
 export const processRateCalculations = async (
   rate,
@@ -19,8 +16,8 @@ export const processRateCalculations = async (
   });
 
   let rateHasChanges = false;
+  let calculatedRatesPromises = [];
   const newCalculatedRates = [];
-  const calculatedRatesPromises = [];
 
   rate.currencyConfigs.sort((a, b) => a.order - b.order);
 
@@ -48,27 +45,31 @@ export const processRateCalculations = async (
 
       newCalculatedRates.push({
         ...newParsedRate,
+        sourceRateDataId: sourceData?.id,
         code: getLowerCode(config?.currency?.code),
+        rateId: rate?.id,
       });
-
-      const calculatedRatePromise = await db.CalculatedRate.create(
-        {
-          rateId: rate?.id,
-          code: config?.currency?.code,
-          bid: newParsedRate?.bid,
-          sell: newParsedRate?.sell,
-          sourceRateDataId: sourceData?.id,
-          calculatedAt: newUpdatedAt,
-        },
-        { transaction }
-      );
-
-      calculatedRatesPromises.push(calculatedRatePromise);
 
       if (hasChanged) {
         rateHasChanges = true;
       }
     }
+  }
+
+  if (rateHasChanges) {
+    calculatedRatesPromises = newCalculatedRates.map(async (rateItem) => {
+      return await db.CalculatedRate.create(
+        {
+          rateId: rate?.id,
+          code: rateItem?.code,
+          bid: rateItem?.bid,
+          sell: rateItem?.sell,
+          sourceRateDataId: rateItem?.sourceRateDataId,
+          calculatedAt: newUpdatedAt,
+        },
+        { transaction }
+      );
+    });
   }
 
   return {

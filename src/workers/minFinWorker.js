@@ -1,4 +1,5 @@
 import { withBrowser } from '../middleware/withBrowser.js';
+import { getNumber } from '../utils/numberUtils.js';
 
 const minFinWorkerCore = async (page, rateSource) => {
   const url = rateSource?.link;
@@ -29,16 +30,12 @@ const minFinWorkerCore = async (page, rateSource) => {
     const code = item?.currency?.toLowerCase();
     const updated = item?._updated;
 
-    // Check if buy/sell values exist and are valid
-    const buyValue = item?.rate?.buy?.value;
+    // Check if bid/sell values exist and are valid
+    const bidValue = item?.rate?.buy?.value;
     const sellValue = item?.rate?.sell?.value;
 
-    const bid = buyValue
-      ? parseFloat(String(buyValue).replace(',', '.'))
-      : null;
-    const sell = sellValue
-      ? parseFloat(String(sellValue).replace(',', '.'))
-      : null;
+    const bid = getNumber(bidValue);
+    const sell = getNumber(sellValue);
 
     rates.push({
       code: code,

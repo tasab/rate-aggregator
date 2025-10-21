@@ -30,6 +30,7 @@ export const updateRate = withTransaction(async (req, res) => {
       chatId,
       botToken,
       notificationsEnabled,
+      enableTrend,
       messageHeader,
       messageFooter,
     } = telegramConfig;
@@ -47,6 +48,7 @@ export const updateRate = withTransaction(async (req, res) => {
         messageHeader: messageHeader || null,
         messageFooter: messageFooter || null,
         notificationsEnabled: notificationsEnabled ?? false,
+        enableTrend: enableTrend ?? false,
         isConnected: false,
       },
       { transaction }

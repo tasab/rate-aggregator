@@ -1,7 +1,7 @@
 import { findUserRateById } from '../query/userRateQueries.js';
 import { findAllCalculatedRates } from '../query/calculatedRateQueries.js';
 import { CURRENCY_CONFIGS_INCLUDE } from '../query/includes.js';
-import { getLowerCode } from '../utils/rateUtils.js';
+import { getLowerCode } from '../utils/stringUtils.js';
 
 export const getUserRate = async (rateId, transaction) => {
   if (!rateId) {

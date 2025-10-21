@@ -1,15 +1,11 @@
 import { LOG_ERROR, LOG_INFO, LOG_SUCCESS, logger } from '../utils/logger.js';
-import {
-  getCurrencyEmoji,
-  getLowerCode,
-  getString,
-  getTrendIcon,
-  getUpperCode,
-} from '../utils/rateUtils.js';
+import { getCurrencyEmoji, getTrendIcon } from '../utils/rateUtils.js';
 import TelegramBot from 'node-telegram-bot-api';
+import { getLowerCode, getString, getUpperCode } from '../utils/stringUtils.js';
 
 export const sendRateUpdateMessage = async (rateData) => {
   const { rate, newRate, prevRate } = rateData;
+
   try {
     if (
       !rate?.telegramConfig?.botToken ||
@@ -41,8 +37,12 @@ export const sendRateUpdateMessage = async (rateData) => {
       // const prevBuy = getString(prevRateItem?.bid) || 'N/A';
       // const prevSell = getString(prevRateItem?.sell) || 'N/A';
 
-      const bidTrend = getTrendIcon(newRateItem?.bid, prevRateItem?.bid);
-      const sellTrend = getTrendIcon(newRateItem?.sell, prevRateItem?.sell);
+      const bidTrend = rate.telegramConfig.enableTrend
+        ? getTrendIcon(newRateItem?.bid, prevRateItem?.bid)
+        : '';
+      const sellTrend = rate.telegramConfig.enableTrend
+        ? getTrendIcon(newRateItem?.sell, prevRateItem?.sell)
+        : '';
 
       let message = `${emojiFlag} ${newRateCode}: ${newBid} ${bidTrend} - ${newSell} ${sellTrend}`;
       // message += `\n   Previous: ${prevBuy} - ${prevSell}`;
@@ -65,8 +65,8 @@ export const sendRateUpdateMessage = async (rateData) => {
     if (rate?.telegramConfig?.messageFooter) {
       finalMessage += `\n${rate?.telegramConfig?.messageFooter}`;
     }
-
-    await bot.sendMessage(rate.telegramConfig?.chatId, finalMessage);
+    console.log(finalMessage, 'finalMessage1');
+    // await bot.sendMessage(rate.telegramConfig?.chatId, finalMessage);
 
     logger(
       null,

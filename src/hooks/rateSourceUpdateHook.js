@@ -23,16 +23,19 @@ export const rateSourceUpdateHook = async (rateSourceInstance, options) => {
   const processRatesAt = new Date();
   const rateSourceUpdatedAt = rateSourceInstance?.newUpdatedAt;
 
+  // find all rates related to the updated rate source
   const allRates = await findAllUserRates(
     { rateSourceId },
     [CURRENCY_CONFIGS_INCLUDE, TELEGRAM_INCLUDE],
     transaction
   );
 
+  // filter by working hours
   const ratesInWorkingHours = allRates.filter((rate) => {
     return isWithinWorkingHours(rate.startWorkingTime, rate.endWorkingTime);
   });
 
+  // find last rate source data (last fetched rates)
   const rateSourceData = await findAllRateSourceData(
     {
       rateSourceId,

@@ -14,6 +14,7 @@
     "db:migrate:undo:all": "node -r dotenv/config ./node_modules/.bin/sequelize-cli db:migrate:undo:all",
     "db:seed:all": "node -r dotenv/config ./node_modules/.bin/sequelize-cli db:seed:all",
     "db:seed:undo:all": "node -r dotenv/config ./node_modules/.bin/sequelize-cli db:seed:undo:all",
+    "db:reset": "npm run db:migrate:undo:all && npm run db:migrate && npm run db:seed:all",
     "db:create": "node -r dotenv/config ./node_modules/.bin/sequelize-cli db:create",
     "db:drop": "node -r dotenv/config ./node_modules/.bin/sequelize-cli db:drop",
     "db:migrate:working-time": "node -r dotenv/config ./node_modules/.bin/sequelize-cli db:migrate --to 20250917220813-add-working-time-to-rates.cjs"

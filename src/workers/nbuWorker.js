@@ -1,4 +1,5 @@
 import { withBrowser } from '../middleware/withBrowser.js';
+import { getNumber } from '../utils/numberUtils.js';
 
 const nbuWorkerCore = async (page, rateSource) => {
   const url = rateSource?.link;
@@ -13,7 +14,8 @@ const nbuWorkerCore = async (page, rateSource) => {
 
   const pageRates = await page.evaluate(() => {
     const rows = document.querySelectorAll('#exchangeRates tbody tr');
-    const result = [];
+
+    const rawData = [];
 
     rows.forEach((row) => {
       const codeEl = row.querySelector('td[data-label="Letter code"]');
@@ -22,26 +24,36 @@ const nbuWorkerCore = async (page, rateSource) => {
       if (!codeEl || !rateEl) return;
 
       const code = codeEl.textContent.trim().toLowerCase();
-      const rate = parseFloat(rateEl.textContent.trim().replace(',', '.'));
+      const rate = rateEl.textContent.trim().replace(',', '.');
 
-      if (!isNaN(rate)) {
-        result.push({
-          code,
-          sell: null,
-          bid: rate,
-          updated: new Date().toString(),
-        });
-      }
+      rawData.push({ code, rate });
     });
 
-    return result;
+    return {
+      rawData,
+      updated: new Date().toISOString(), // return raw timestamp for formatting in Node
+    };
   });
 
-  if (!pageRates || !Array.isArray(pageRates)) {
+  if (!pageRates?.rawData || !Array.isArray(pageRates.rawData)) {
     throw new Error('Invalid data structure from nbuWorker');
   }
 
-  return pageRates;
+  const formattedRate = pageRates.rawData
+    .map(({ code, rate }) => {
+      const bid = getNumber(rate);
+      if (isNaN(bid)) return null;
+
+      return {
+        code,
+        sell: null,
+        bid,
+        updated: new Date().toISOString(),
+      };
+    })
+    .filter(Boolean);
+
+  return formattedRate;
 };
 
 export const nbuWorker = withBrowser(nbuWorkerCore);

@@ -47,6 +47,11 @@ module.exports = {
         allowNull: false,
         defaultValue: false,
       },
+      enable_trend: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
+      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

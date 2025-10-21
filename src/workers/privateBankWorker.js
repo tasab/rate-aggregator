@@ -1,49 +1,55 @@
+import { getLowerCode } from '../utils/stringUtils.js';
 import { withBrowser } from '../middleware/withBrowser.js';
+import { getNumber } from '../utils/numberUtils.js';
 
 const privateBankWorkerCore = async (page, rateSource) => {
   const url = rateSource?.link;
 
-  if (!url) {
-    throw new Error('URL is required');
-  }
+  if (!url) throw new Error('URL is required');
 
-  await page.goto(url, {
-    waitUntil: 'networkidle2',
-  });
+  await page.goto(url, { waitUntil: 'networkidle2' });
 
-  const pageRates = await page.evaluate(() => {
+  const pageRatesRaw = await page.evaluate(() => {
     const currencyBlock = document.querySelector('.courses-currencies');
-    const currencyPairs = currencyBlock.querySelectorAll('.currency-pairs');
+    if (!currencyBlock) return [];
 
+    const currencyPairs = currencyBlock.querySelectorAll('.currency-pairs');
     const rates = [];
 
     currencyPairs.forEach((pair) => {
-      // Get currency name (first text node, excluding the compare currency)
       const nameElement = pair.querySelector('.names span');
-      const currencyName = nameElement.firstChild.textContent.trim();
+      const code = nameElement?.firstChild?.textContent?.trim();
 
-      // Get purchase (bid) rate
       const bidElement = pair.querySelector('.purchase span');
-      const bid = parseFloat(bidElement.textContent.trim());
+      const bidRaw = bidElement?.textContent?.trim();
 
-      // Get sale (sell) rate
       const sellElement = pair.querySelector('.sale span');
-      const sell = parseFloat(sellElement.textContent.trim());
+      const sellRaw = sellElement?.textContent?.trim();
 
-      rates.push({
-        code: currencyName?.toLowerCase(),
-        bid: bid,
-        sell: sell,
-        updated: new Date().toISOString(),
-      });
+      if (code && bidRaw && sellRaw) {
+        rates.push({
+          code,
+          bidRaw,
+          sellRaw,
+          updated: new Date().toISOString(),
+        });
+      }
     });
 
     return rates;
   });
 
+  const pageRates = pageRatesRaw.map((r) => ({
+    code: getLowerCode(r.code),
+    bid: getNumber(r.bidRaw),
+    sell: getNumber(r.sellRaw),
+    updated: r.updated,
+  }));
+
   if (!pageRates || !Array.isArray(pageRates)) {
     throw new Error('Invalid data structure from privateBankWorker');
   }
+
   return pageRates;
 };
 

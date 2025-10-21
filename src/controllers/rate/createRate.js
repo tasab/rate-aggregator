@@ -5,7 +5,10 @@ import { findAllRateSourceData } from '../../query/rateSourceDataQueries.js';
 import { findRateSourceById } from '../../query/rateSourceQueries.js';
 import { sendRateUpdateMessage } from '../../helpers/sendRateMessage.js';
 import { findUserRateById } from '../../query/userRateQueries.js';
-import { CURRENCY_CONFIGS_INCLUDE } from '../../query/includes.js';
+import {
+  CURRENCY_CONFIGS_INCLUDE,
+  TELEGRAM_INCLUDE,
+} from '../../query/includes.js';
 
 export const createRate = withTransaction(async (req, res) => {
   const transaction = req.transaction;
@@ -49,6 +52,7 @@ export const createRate = withTransaction(async (req, res) => {
       chatId,
       botToken,
       notificationsEnabled,
+      enableTrend,
       messageHeader,
       messageFooter,
     } = telegramConfig;
@@ -62,6 +66,7 @@ export const createRate = withTransaction(async (req, res) => {
           messageHeader: messageHeader || null,
           messageFooter: messageFooter || null,
           notificationsEnabled: notificationsEnabled ?? false,
+          enableTrend: enableTrend ?? false,
           isConnected: false,
         },
         { transaction }
@@ -101,7 +106,7 @@ export const createRate = withTransaction(async (req, res) => {
   }
   const rateWithConfigs = await findUserRateById(
     rate.id,
-    [CURRENCY_CONFIGS_INCLUDE],
+    [CURRENCY_CONFIGS_INCLUDE, TELEGRAM_INCLUDE],
     transaction
   );
 
@@ -120,7 +125,7 @@ export const createRate = withTransaction(async (req, res) => {
   await Promise.all([
     ...calculatedRatesPromises,
     sendRateUpdateMessage({
-      rate,
+      rate: rateWithConfigs,
       newRate: newCalculatedRates,
       prevRate: previousCalculatedRates,
     }),

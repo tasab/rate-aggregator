@@ -39,6 +39,11 @@ export default (sequelize, DataTypes) => {
         defaultValue: false,
         allowNull: false,
       },
+      enableTrend: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false,
+      },
     },
     {
       tableName: 'telegram_configs',

@@ -14,6 +14,7 @@ import { getServerTime } from '../controllers/time.js';
 import DBHealthRouter from './DBHealthRouter.js';
 import { bootSourcesFetch } from '../controllers/bootSourcesFetch.js';
 import shareRouter from './shareRouter.js';
+import chartRouter from './chartRouter.js';
 
 const mainRouter = Router();
 
@@ -34,7 +35,7 @@ mainRouter.get('/verify-token', verifyToken);
 mainRouter.get('/time', getServerTime);
 
 mainRouter.use('/', shareRouter);
-mainRouter.use('/', authMiddleware, currencyRouter);
+mainRouter.use('/', authMiddleware, chartRouter);
 mainRouter.use('/', authMiddleware, currencyRouter);
 mainRouter.use('/', authMiddleware, rateSourceRouter);
 mainRouter.use('/', authMiddleware, rateSourceOrderRouter);

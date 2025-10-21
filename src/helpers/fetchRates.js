@@ -2,7 +2,7 @@ import db from '../models/index.js';
 import { getRateSourceController } from '../utils/getRateSourceController.js';
 import { LOG_ERROR, logger } from '../utils/logger.js';
 import { findAllRateSources } from '../query/rateSourceQueries.js';
-import { getLowerCode } from '../utils/rateUtils.js';
+import { getLowerCode } from '../utils/stringUtils.js';
 
 export const fetchRawRatesFromSources = async () => {
   try {
