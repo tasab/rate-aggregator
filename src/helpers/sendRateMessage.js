@@ -65,8 +65,8 @@ export const sendRateUpdateMessage = async (rateData) => {
     if (rate?.telegramConfig?.messageFooter) {
       finalMessage += `\n${rate?.telegramConfig?.messageFooter}`;
     }
-    console.log(finalMessage, 'finalMessage1');
-    // await bot.sendMessage(rate.telegramConfig?.chatId, finalMessage);
+
+    await bot.sendMessage(rate.telegramConfig?.chatId, finalMessage);
 
     logger(
       null,
