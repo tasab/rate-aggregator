@@ -37,12 +37,15 @@ export const sendRateUpdateMessage = async (rateData) => {
       // const prevBuy = getString(prevRateItem?.bid) || 'N/A';
       // const prevSell = getString(prevRateItem?.sell) || 'N/A';
 
-      const bidTrend = rate.telegramConfig.enableTrend
-        ? getTrendIcon(newRateItem?.bid, prevRateItem?.bid)
-        : '';
-      const sellTrend = rate.telegramConfig.enableTrend
-        ? getTrendIcon(newRateItem?.sell, prevRateItem?.sell)
-        : '';
+      // const bidTrend = rate.telegramConfig.enableTrend
+      //   ? getTrendIcon(newRateItem?.bid, prevRateItem?.bid)
+      //   : '';
+      // const sellTrend = rate.telegramConfig.enableTrend
+      //   ? getTrendIcon(newRateItem?.sell, prevRateItem?.sell)
+      //   : '';
+
+      const bidTrend = getTrendIcon(newRateItem?.bid, prevRateItem?.bid);
+      const sellTrend = getTrendIcon(newRateItem?.sell, prevRateItem?.sell);
 
       let message = `${emojiFlag} ${newRateCode}: ${newBid} ${bidTrend} - ${newSell} ${sellTrend}`;
       // message += `\n   Previous: ${prevBuy} - ${prevSell}`;
