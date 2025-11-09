@@ -1,8 +1,9 @@
 import db from '../models/index.js';
 import { getRateSourceController } from '../utils/getRateSourceController.js';
-import { LOG_ERROR, logger } from '../utils/logger.js';
+import { LOG_ERROR, LOG_INFO, logger } from '../utils/logger.js';
 import { findAllRateSources } from '../query/rateSourceQueries.js';
 import { getLowerCode } from '../utils/stringUtils.js';
+import browserManager from './browserManager.js';
 
 export const fetchRawRatesFromSources = async () => {
   try {
@@ -19,12 +20,22 @@ export const fetchRawRatesFromSources = async () => {
     }
   } catch (error) {
     logger(error, 'Fatal error in rate fetching job:', LOG_ERROR);
+  } finally {
+    await browserManager.restart();
+    logger(null, 'Browser manager restarted', LOG_INFO);
   }
 };
 
 const fetchFromSingleSource = async (rateSource) => {
   const transaction = await db.sequelize.transaction();
+  const currentTime = new Date();
+  const currentHour = currentTime.getHours();
 
+  // NBU LIMIT FETCH 1 per day
+  if (rateSource.id === 3 && currentHour !== 0) {
+    logger(null, `NBU fetch skipped, current hour: ${currentHour}`, LOG_INFO);
+    return;
+  }
   try {
     const controller = getRateSourceController(rateSource.controllerType);
 
