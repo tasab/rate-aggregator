@@ -1,4 +1,3 @@
-import db from '../models/index.js';
 import { sendRateUpdateMessage } from '../helpers/sendRateMessage.js';
 import { processRateCalculations } from '../utils/rateProcessor.js';
 import { findUserRateById } from '../query/userRateQueries.js';

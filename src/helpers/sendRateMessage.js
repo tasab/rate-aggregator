@@ -7,14 +7,19 @@ export const sendRateUpdateMessage = async (rateData) => {
   const { rate, newRate, prevRate } = rateData;
 
   try {
-    if (
-      !rate?.telegramConfig?.botToken ||
-      !rate?.telegramConfig?.chatId ||
-      !rate?.telegramConfig?.notificationsEnabled
-    ) {
+    if (!rate?.telegramConfig?.botToken || !rate?.telegramConfig?.chatId) {
       logger(
         null,
         `Rate ${rate.id} doesn't have telegram configuration, skipping`,
+        LOG_INFO
+      );
+      return;
+    }
+
+    if (!rate?.telegramConfig?.notificationsEnabled) {
+      logger(
+        null,
+        `Rate ${rate.id} telegram notifications disabled by config`,
         LOG_INFO
       );
       return;
@@ -34,21 +39,14 @@ export const sendRateUpdateMessage = async (rateData) => {
       const newBid = getString(newRateItem?.bid) || 'N/A';
       const newSell = getString(newRateItem?.sell) || 'N/A';
 
-      // const prevBuy = getString(prevRateItem?.bid) || 'N/A';
-      // const prevSell = getString(prevRateItem?.sell) || 'N/A';
-
-      // const bidTrend = rate.telegramConfig.enableTrend
-      //   ? getTrendIcon(newRateItem?.bid, prevRateItem?.bid)
-      //   : '';
-      // const sellTrend = rate.telegramConfig.enableTrend
-      //   ? getTrendIcon(newRateItem?.sell, prevRateItem?.sell)
-      //   : '';
-
-      const bidTrend = getTrendIcon(newRateItem?.bid, prevRateItem?.bid);
-      const sellTrend = getTrendIcon(newRateItem?.sell, prevRateItem?.sell);
+      const bidTrend = rate.telegramConfig.enableTrend
+        ? getTrendIcon(newRateItem?.bid, prevRateItem?.bid)
+        : '';
+      const sellTrend = rate.telegramConfig.enableTrend
+        ? getTrendIcon(newRateItem?.sell, prevRateItem?.sell)
+        : '';
 
       let message = `${emojiFlag} ${newRateCode}: ${newBid} ${bidTrend} - ${newSell} ${sellTrend}`;
-      // message += `\n   Previous: ${prevBuy} - ${prevSell}`;
 
       rateMessages.push(message);
     }

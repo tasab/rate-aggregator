@@ -2,6 +2,7 @@ import db from '../models/index.js';
 import { hasRateChanged, parseRate } from './rateUtils.js';
 import { getLowerCode } from './stringUtils.js';
 import { getNumber } from './numberUtils.js';
+import { findAllCurrencyConfigs } from '../query/currencyConfigsQueries.js';
 
 export const processRateCalculations = async (
   rate,
@@ -19,9 +20,9 @@ export const processRateCalculations = async (
   let calculatedRatesPromises = [];
   const newCalculatedRates = [];
 
-  rate.currencyConfigs.sort((a, b) => a.order - b.order);
+  const currencyConfigs = await findAllCurrencyConfigs(rate?.id, transaction);
 
-  for (const config of rate.currencyConfigs) {
+  for (const config of currencyConfigs) {
     const sourceData = rateSourceData.find(
       (data) =>
         getLowerCode(data?.code) === getLowerCode(config?.currency?.code)

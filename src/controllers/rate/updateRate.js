@@ -1,6 +1,9 @@
 import { withTransaction } from '../../middleware/withTransaction.js';
 import db from '../../models/index.js';
 import { findUserRateById } from '../../query/userRateQueries.js';
+import { processRateCalculations } from '../../utils/rateProcessor.js';
+import { findAllRateSourceData } from '../../query/rateSourceDataQueries.js';
+import { findRateSourceById } from '../../query/rateSourceQueries.js';
 
 export const updateRate = withTransaction(async (req, res) => {
   const {
@@ -20,9 +23,15 @@ export const updateRate = withTransaction(async (req, res) => {
   }
   const existingRate = await findUserRateById(id, [], transaction);
   const newUpdatedAt = new Date();
+  const prevUpdatedAt = existingRate?.newUpdatedAt;
+  const rateSource = await findRateSourceById(rateSourceId);
 
   if (!existingRate) {
     return res.status(404).json({ error: 'Rate not found' });
+  }
+
+  if (!rateSource) {
+    return res.status(404).json({ error: 'Rate Source not found' });
   }
 
   if (telegramConfig) {
@@ -94,6 +103,30 @@ export const updateRate = withTransaction(async (req, res) => {
     }
   }
 
+  const rateSourceData = await findAllRateSourceData(
+    {
+      rateSourceId,
+      fetchedAt: rateSource?.newUpdatedAt,
+    },
+    [],
+    transaction
+  );
+
+  const { rateHasChanges } = await processRateCalculations(
+    existingRate,
+    rateSourceData,
+    prevUpdatedAt,
+    newUpdatedAt,
+    transaction
+  );
+
+  const updatedRateAt = rateHasChanges
+    ? {
+        newUpdatedAt,
+        prevUpdatedAt: existingRate?.newUpdatedAt,
+      }
+    : {};
+
   await existingRate.update(
     {
       name,
@@ -101,8 +134,7 @@ export const updateRate = withTransaction(async (req, res) => {
       isPrivateRate,
       startWorkingTime,
       endWorkingTime,
-      newUpdatedAt,
-      prevUpdatedAt: existingRate?.newUpdatedAt,
+      ...updatedRateAt,
     },
     { transaction }
   );
