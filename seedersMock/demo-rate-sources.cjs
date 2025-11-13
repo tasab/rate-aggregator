@@ -5,6 +5,7 @@ const rateSourceTCMagnus = require('./lviv/demoTCMagnus.cjs');
 const rateSourceGoverla = require('./ukraine/demoGoverla.cjs');
 const rateSourceNBU = require('./ukraine/demoNBU.cjs');
 const rateSourcePrivate = require('./ukraine/demoPrivate.cjs');
+const rateSourceXChangeTernopil = require('./ternopil/demoXChangeTernopil.cjs');
 
 module.exports = [
   rateSourceLesyaUrk,
@@ -14,4 +15,5 @@ module.exports = [
   rateSourceGoverla,
   rateSourceNBU,
   rateSourcePrivate,
+  rateSourceXChangeTernopil,
 ];
