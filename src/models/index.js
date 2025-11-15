@@ -1,5 +1,6 @@
 import Sequelize, { DataTypes } from 'sequelize';
 import config from 'config';
+import databaseConfig from '../../config/database.js';
 
 import UserModel from './userModel.js';
 import UserRateModel from './userRateModel.js';
@@ -13,13 +14,41 @@ import TelegramConfigModel from './telegramConfigModel.js';
 import { associateModels, registerHooks } from '../hooks/index.js';
 
 const db = {};
+const env = process.env.NODE_ENV || 'development';
+const envConfig = databaseConfig[env];
 
+// Create Sequelize instance with environment-specific config
 const sequelize = new Sequelize(
-  config.database.database,
-  config.database.username,
-  config.database.password,
-  config.database
+  envConfig.database,
+  envConfig.username,
+  envConfig.password,
+  envConfig
 );
+
+// Add connection event listeners for monitoring
+sequelize.addHook('beforeConnect', () => {
+  console.log('Attempting to connect to database...');
+});
+
+sequelize.addHook('afterConnect', () => {
+  console.log('Database connection established');
+});
+
+sequelize.addHook('beforeDisconnect', () => {
+  console.log('Disconnecting from database...');
+});
+
+// Test the connection
+const testConnection = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('Database connection has been established successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
+};
+
+testConnection();
 
 db.User = UserModel(sequelize, DataTypes);
 db.Currency = CurrencyModel(sequelize, DataTypes);
@@ -36,5 +65,19 @@ registerHooks(db);
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+
+// Add graceful shutdown handlers
+const gracefulShutdown = async () => {
+  console.log('Closing database connections...');
+  try {
+    await sequelize.close();
+    console.log('Database connections closed successfully.');
+  } catch (error) {
+    console.error('Error closing database connections:', error);
+  }
+};
+
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
 
 export default db;

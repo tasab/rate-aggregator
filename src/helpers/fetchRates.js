@@ -5,6 +5,15 @@ import { findAllRateSources } from '../query/rateSourceQueries.js';
 import { getLowerCode } from '../utils/stringUtils.js';
 import browserManager from './browserManager.js';
 
+const logPoolStats = (operation) => {
+  const pool = db.sequelize.connectionManager.pool;
+  if (pool) {
+    console.log(
+      `🔗 [${operation}] Pool: ${pool.using}/${pool.size} active, ${pool.available} idle, ${pool.waiting} waiting`
+    );
+  }
+};
+
 export const fetchRawRatesFromSources = async () => {
   try {
     const rateSources = await findAllRateSources({
@@ -21,8 +30,9 @@ export const fetchRawRatesFromSources = async () => {
   } catch (error) {
     logger(error, 'Fatal error in rate fetching job:', LOG_ERROR);
   } finally {
-    // await browserManager.restart();
+    await browserManager.restart();
     logger(null, 'Browser manager restarted', LOG_INFO);
+    logPoolStats('CRON_END');
   }
 };
 
@@ -34,6 +44,7 @@ const fetchFromSingleSource = async (rateSource) => {
   // NBU LIMIT FETCH 1 per day
   if (rateSource.id === 3 && currentHour !== 0) {
     logger(null, `NBU fetch skipped, current hour: ${currentHour}`, LOG_INFO);
+    transaction.rollback();
     return;
   }
   try {
