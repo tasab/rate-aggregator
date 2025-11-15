@@ -1,6 +1,5 @@
 import Sequelize, { DataTypes } from 'sequelize';
 import config from 'config';
-import databaseConfig from '../../config/database.js';
 
 import UserModel from './userModel.js';
 import UserRateModel from './userRateModel.js';
@@ -14,15 +13,13 @@ import TelegramConfigModel from './telegramConfigModel.js';
 import { associateModels, registerHooks } from '../hooks/index.js';
 
 const db = {};
-const env = process.env.NODE_ENV || 'development';
-const envConfig = databaseConfig[env];
 
 // Create Sequelize instance with environment-specific config
 const sequelize = new Sequelize(
-  envConfig.database,
-  envConfig.username,
-  envConfig.password,
-  envConfig
+  config.database.database,
+  config.database.username,
+  config.database.password,
+  config.database
 );
 
 // Add connection event listeners for monitoring
