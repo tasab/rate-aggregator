@@ -21,7 +21,7 @@ export const fetchRawRatesFromSources = async () => {
   } catch (error) {
     logger(error, 'Fatal error in rate fetching job:', LOG_ERROR);
   } finally {
-    await browserManager.restart();
+    // await browserManager.restart();
     logger(null, 'Browser manager restarted', LOG_INFO);
   }
 };
